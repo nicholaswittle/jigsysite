@@ -1,47 +1,52 @@
 # Jigsy's Old Forge Pizza — website concept
 
 A redesign concept / practice template for **Jigsy's Brewpub & Restaurant**
-(Old Forge–style pizza, Enola, PA). Built as a single self-contained
-`index.html` — no build step, no dependencies, no external assets.
-
-Open it by double-clicking `index.html`, or serve the folder:
+(Old Forge–style pizza, Enola, PA). Single self-contained `index.html` plus a
+small `images/` folder — no build step, no npm deps.
 
 ```
 cd C:/development/projects/jigsys_site
 python -m http.server 8080   # then visit http://localhost:8080
 ```
 
+Live: https://jigsysite.vercel.app  
+Repo: https://github.com/nicholaswittle/jigsysite
+
 ## What's in it
 
-- **Build Your Tray** — interactive: Red/White, Half/Full, live toppings;
-  the SVG tray and price update in real time.
-- **Live Open/Closed status** — computed from the real Summer 2026 hours;
-  the hours table auto-marks "today".
-- Old Forge explainer (Red or White · By the Tray · Cut in Squares),
-  full sample menu, story band, visit/location, sticky order bar.
-- Ambient oven-steam hero (canvas), diner-sign marquee, scroll-in reveals.
-- Light + dark themes with a working toggle.
-- All motion respects `prefers-reduced-motion`; progressive-enhancement
-  safe (content is visible with JS disabled).
+- **Call It In** — phone-order and dine-in only (no online cart). Big tap-to-call
+  number, three steps, live open/closed status.
+- **Full-bleed photo hero** — venue collage from Jigsy's public graphics; Call
+  is the primary CTA.
+- **Real Nov 2025 menu** — Old Forge / Specialty / Gourmet / Wings / Stromboli /
+  Starters / Salads / Subs, transcribed from published menu images.
+- **Live Open/Closed** — Summer 2026 hours; hours table marks "today."
+- Old Forge explainer (Red or White · By the Tray · Cut in Squares), story band,
+  visit/location, sticky order bar, light/dark theme toggle.
+- Document head + Open Graph + `Restaurant` JSON-LD.
+- Motion respects `prefers-reduced-motion`; content visible with JS off.
 
-Design system lives inline in `index.html` as CSS custom properties
-(`:root`): sauce red `#B23A2B`, golden-crust amber `#CF9438`, charred
-anthracite `#17110D`, warm paper `#F7F0E3`. Type is a system grotesque
-display paired with Georgia for body.
+## Photos
 
-## Before this ships as a real site
+`images/` holds assets pulled from `jigsyspizza.com/graphics` for this concept:
 
-This is a **concept**, not the official Jigsy's site. Two things to swap:
+| File | Use |
+|------|-----|
+| `banner_collage.png` | Hero + photo band (building / signage) |
+| `img_2956.jpg` | Photo band + story (catering food) |
+| `square-logo-full.png` | Favicon |
 
-1. **Menu items and prices are placeholder samples.** Replace with the real
-   menu. (The current live site keeps its menu behind a separate link.)
-2. **It's photo-less.** The Artifact CSP blocked remote images, so the hero
-   art is a CSS/SVG tray. A production site wants real food photography —
-   add `<img>` slots or embed images as data URIs.
+Tray / wings close-ups are still thin in the public graphics folder — swap in
+fresher phone photos when available.
 
-Real, verified details already in the page: address (225 N Enola Road,
-Enola PA 17025), phone (717) 732-7708, the Summer 2026 hours, the 2023
-Harrisburg Magazine "Best Wings" award, and the Instagram handle.
+## Design tokens
 
-Published concept (private Artifact):
-https://claude.ai/code/artifact/85f5d407-0824-480e-863b-dab0d6fedc65
+Inline CSS custom properties in `index.html`: sauce red `#B23A2B`, golden-crust
+`#CF9438`, charred anthracite `#17110D`, warm paper `#F7F0E3`.
+
+## Deploy note
+
+Vercel deploy under **wi-sense-llc** is currently CLI-based (not Git-integrated).
+After changes: `vercel --cwd . deploy --prod --yes --scope wi-sense-llc`
+
+This is a **concept**, not the official Jigsy's site.

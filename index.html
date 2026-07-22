@@ -1,4 +1,71 @@
-<script>document.documentElement.classList.add("js-anim");</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jigsy's Old Forge Pizza · Enola, PA | Best Wings &amp; Trays</title>
+  <meta name="description" content="Old Forge pizza in Enola, PA — trays cut in squares, award-winning wings, Chick Fil J, patio and downstairs lounge. Phone-order at (717) 732-7708.">
+  <meta name="theme-color" content="#17110D">
+  <link rel="icon" href="images/square-logo-full.png" type="image/png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Jigsy's Old Forge Pizza · Enola, PA">
+  <meta property="og:description" content="Old Forge–style trays, award-winning wings, and cold local taps. Phone-order and dine-in — call (717) 732-7708.">
+  <meta property="og:image" content="https://jigsyssite.vercel.app/images/hero_pizza.jpg">
+  <meta property="og:url" content="https://jigsyssite.vercel.app/">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jigsy's Old Forge Pizza · Enola, PA">
+  <meta name="twitter:description" content="Old Forge–style trays, award-winning wings, and cold local taps. Call (717) 732-7708.">
+  <meta name="twitter:image" content="https://jigsyssite.vercel.app/images/hero_pizza.jpg">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Jigsy's Brewpub & Restaurant",
+    "alternateName": "Jigsy's Old Forge Pizza",
+    "image": [
+      "https://jigsyssite.vercel.app/images/hero_pizza.jpg",
+      "https://jigsyssite.vercel.app/images/band_lounge.jpg"
+    ],
+    "telephone": "+1-717-732-7708",
+    "url": "https://jigsyssite.vercel.app",
+    "servesCuisine": ["Pizza", "American", "Brewpub"],
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "225 N Enola Road",
+      "addressLocality": "Enola",
+      "addressRegion": "PA",
+      "postalCode": "17025",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 40.2949188,
+      "longitude": -76.9301358
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.5",
+      "reviewCount": "553",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Wednesday", "opens": "16:00", "closes": "20:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Thursday", "opens": "11:00", "closes": "20:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Friday", "opens": "11:00", "closes": "21:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "11:00", "closes": "22:00" }
+    ],
+    "sameAs": [
+      "https://www.instagram.com/jigsys_brewpub_restaurant",
+      "https://www.facebook.com/jigsyspizza/",
+      "https://www.jigsyspizza.com/",
+      "https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m6!3m5!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf"
+    ]
+  }
+  </script>
+  <script>document.documentElement.classList.add("js-anim");</script>
 <style>
   :root {
     --ground: #F7F0E3;
@@ -148,32 +215,30 @@
   .hero {
     background: var(--char-band); color: var(--char-ink);
     position: relative; overflow: hidden; border-bottom: 3px solid var(--sauce);
+    min-height: min(92vh, 820px);
+    display: flex; align-items: flex-end;
   }
-  .hero-grid-bg {
+  .hero-media { position: absolute; inset: 0; }
+  .hero-media img {
+    width: 100%; height: 100%; object-fit: cover; object-position: 55% 40%;
+    display: block; transform: scale(1.04);
+  }
+  .hero-scrim {
     position: absolute; inset: 0;
-    background-image:
-      linear-gradient(var(--char-line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--char-line) 1px, transparent 1px);
-    background-size: 64px 64px;
-    mask-image: radial-gradient(120% 90% at 22% 12%, #000 28%, transparent 78%);
+    background:
+      linear-gradient(100deg, rgba(10, 8, 6, 0.88) 0%, rgba(10, 8, 6, 0.55) 34%, rgba(10, 8, 6, 0.18) 62%, rgba(10, 8, 6, 0.08) 100%),
+      linear-gradient(180deg, rgba(10, 8, 6, 0.15) 0%, rgba(10, 8, 6, 0.05) 40%, rgba(10, 8, 6, 0.72) 100%);
     pointer-events: none;
   }
   .hero-inner {
-    position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto;
-    padding: 62px 24px 54px;
-    display: grid; grid-template-columns: 1.12fr 0.88fr; gap: 40px; align-items: center;
+    position: relative; z-index: 2; width: 100%; max-width: var(--maxw); margin: 0 auto;
+    padding: 88px 24px 56px;
   }
-  .badge {
-    display: inline-flex; align-items: center; gap: 9px;
-    font-family: var(--display); font-size: 0.7rem; font-weight: 700;
-    letter-spacing: 0.11em; text-transform: uppercase; color: var(--crust-bright);
-    border: 1px solid color-mix(in srgb, var(--crust-bright) 45%, transparent);
-    border-radius: 999px; padding: 7px 14px; margin-bottom: 20px;
-  }
-  .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--crust-bright); }
   .hero h1 {
     font-weight: 800; letter-spacing: -0.035em; line-height: 0.9;
     font-size: clamp(3.4rem, 9vw, 6.6rem); text-transform: uppercase; margin: 0 0 8px;
+    max-width: 12ch;
+    text-shadow: 0 2px 28px rgba(0, 0, 0, 0.45);
   }
   .hero h1 .apos { color: var(--sauce); }
   .hero-sub {
@@ -182,14 +247,14 @@
   }
   .hero-status {
     font-family: var(--display); font-size: 0.86rem; font-weight: 700; letter-spacing: 0.02em;
-    margin: 0 0 20px; display: inline-flex; align-items: center; gap: 9px;
+    margin: 0 0 18px; display: inline-flex; align-items: center; gap: 9px;
   }
   .hero-status .beat { width: 8px; height: 8px; border-radius: 50%; background: var(--char-muted); }
   .hero-status.is-open { color: #7EC08A; } .hero-status.is-open .beat { background: #7EC08A; }
   .hero-status.is-closed { color: #E88A78; } .hero-status.is-closed .beat { background: #E88A78; }
   .hero-lede {
-    font-size: 1.12rem; line-height: 1.55; color: color-mix(in srgb, var(--char-ink) 88%, transparent);
-    max-width: 33ch; margin: 0 0 28px;
+    font-size: 1.2rem; line-height: 1.45; color: color-mix(in srgb, var(--char-ink) 92%, transparent);
+    max-width: 28ch; margin: 0 0 26px; font-weight: 500;
   }
   .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
   .btn {
@@ -202,14 +267,6 @@
   .btn-primary:hover { background: var(--sauce-deep); transform: translateY(-1px); }
   .btn-ghost { background: transparent; color: var(--char-ink); border: 1px solid color-mix(in srgb, var(--char-ink) 32%, transparent); }
   .btn-ghost:hover { border-color: var(--char-ink); transform: translateY(-1px); }
-
-  .tray-art { justify-self: center; width: 100%; max-width: 380px; }
-  .tray-art svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 24px 40px rgba(0,0,0,0.42)); }
-
-  @media (max-width: 860px) {
-    .hero-inner { grid-template-columns: 1fr; gap: 26px; }
-    .tray-art { order: -1; max-width: 290px; }
-  }
 
   /* ---------- Marquee ---------- */
   .marquee {
@@ -230,17 +287,25 @@
   @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   /* ---------- Old Forge explainer ---------- */
-  .oldforge { border-bottom: 1px solid var(--line); }
-  .oldforge-inner { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); }
-  .of-cell { padding: 40px 28px; border-right: 1px solid var(--line); }
-  .of-cell:last-child { border-right: none; }
-  .of-num { font-family: var(--display); font-weight: 800; font-size: 0.9rem; color: var(--crust); letter-spacing: 0.05em; }
-  .of-cell h3 { font-weight: 800; letter-spacing: -0.01em; font-size: 1.5rem; margin: 10px 0 8px; }
-  .of-cell p { margin: 0; color: var(--muted); font-size: 0.98rem; }
+  .oldforge { border-bottom: 1px solid var(--line); padding: 48px 0 0; }
+  .oldforge-wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  .oldforge-head { max-width: 48ch; margin-bottom: 8px; }
+  .oldforge-head .eyebrow { margin-bottom: 6px; }
+  .oldforge-head h2 {
+    font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase;
+    font-size: clamp(1.8rem, 4vw, 2.6rem); line-height: 1; margin: 0 0 10px;
+  }
+  .oldforge-head p { margin: 0 0 22px; color: var(--muted); font-size: 1.05rem; line-height: 1.5; }
+  .oldforge-inner { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
+  .of-cell { padding: 28px 0 36px; border-right: 1px solid var(--line); padding-right: 22px; margin-right: 22px; }
+  .of-cell:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .of-num { font-family: var(--display); font-weight: 800; font-size: 0.78rem; color: var(--crust); letter-spacing: 0.1em; text-transform: uppercase; }
+  .of-cell h3 { font-weight: 800; letter-spacing: -0.01em; font-size: 1.35rem; margin: 10px 0 8px; }
+  .of-cell p { margin: 0; color: var(--muted); font-size: 0.98rem; line-height: 1.5; }
   @media (max-width: 760px) {
     .oldforge-inner { grid-template-columns: 1fr; }
-    .of-cell { border-right: none; border-bottom: 1px solid var(--line); }
-    .of-cell:last-child { border-bottom: none; }
+    .of-cell { border-right: none; margin-right: 0; padding-right: 0; border-bottom: 1px solid var(--line); padding-bottom: 22px; margin-bottom: 8px; }
+    .of-cell:last-child { border-bottom: none; margin-bottom: 0; }
   }
 
   /* ---------- How to order ---------- */
@@ -276,10 +341,11 @@
   .order-step p { margin: 0; color: var(--char-muted); font-size: 0.96rem; line-height: 1.5; }
   @media (max-width: 820px) { .order-inner { grid-template-columns: 1fr; gap: 34px; } }
 
-  /* ---------- Menu ---------- */
+  /* ---------- Menu (tray board + ledger) ---------- */
+  .menu-shell { padding: 66px 0 20px; }
   .section-head {
     display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
-    padding: 66px 0 8px; flex-wrap: wrap;
+    flex-wrap: wrap; margin-bottom: 22px;
   }
   .section-head h2 {
     font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase;
@@ -289,53 +355,234 @@
     font-family: var(--display); font-size: 0.7rem; letter-spacing: 0.08em;
     text-transform: uppercase; color: var(--muted); padding-bottom: 6px;
   }
-  .menu-block { margin-top: 30px; }
-  .menu-block-title {
-    display: flex; align-items: center; gap: 12px; font-family: var(--display);
-    font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; font-size: 1.15rem; margin: 0 0 2px;
+  .menu-jump {
+    position: sticky; top: 52px; z-index: 30;
+    display: flex; gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--line-strong); background: var(--surface);
+    margin-bottom: 36px; scrollbar-width: none;
   }
-  .menu-block-title .tag {
-    font-size: 0.6rem; letter-spacing: 0.14em; color: #241a10; background: var(--crust);
-    padding: 3px 8px; border-radius: 999px;
+  .menu-jump::-webkit-scrollbar { display: none; }
+  .menu-jump a {
+    font-family: var(--display); font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+    color: var(--muted); padding: 12px 16px; white-space: nowrap;
+    border-right: 1px solid var(--line);
   }
-  .menu-block-title .tag.red { background: var(--sauce); color: #fff; }
-  .menu-block-desc { color: var(--muted); font-size: 0.95rem; margin: 0 0 14px; max-width: 60ch; }
-  .cuts {
-    display: grid; grid-template-columns: repeat(2, 1fr);
-    border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden; background: var(--surface);
+  .menu-jump a:last-child { border-right: none; }
+  .menu-jump a:hover { color: var(--ink); background: var(--surface-2); }
+
+  .menu-block { margin-top: 44px; scroll-margin-top: 110px; }
+  .menu-block:first-of-type { margin-top: 0; }
+  .menu-kicker {
+    font-family: var(--display); font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--sauce); margin: 0 0 8px;
   }
-  .cuts.three { grid-template-columns: repeat(3, 1fr); }
-  .cut { padding: 20px 22px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); transition: background 0.15s ease; position: relative; }
-  .cut:hover { background: var(--surface-2); }
-  .cut-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-  .cut-name { font-family: var(--display); font-weight: 700; font-size: 1.02rem; }
-  .cut-price { font-family: var(--display); font-weight: 800; font-size: 1rem; color: var(--sauce); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .cut-desc { margin: 6px 0 0; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
-  .sizes { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
-  .sizes span {
-    font-family: var(--display); font-size: 0.82rem; color: var(--muted);
-    letter-spacing: 0.02em; font-variant-numeric: tabular-nums;
+  .menu-block h3 {
+    font-family: var(--display); font-weight: 800; text-transform: uppercase;
+    letter-spacing: -0.01em; font-size: clamp(1.4rem, 3vw, 1.85rem); margin: 0 0 8px; line-height: 1.1;
   }
-  .sizes b { color: var(--sauce); font-weight: 800; }
-  .wing-flavors { display: grid; grid-template-columns: 1fr auto; gap: 6px 30px; align-items: start; }
-  .wing-sizes { display: flex; flex-direction: column; gap: 8px; }
-  .wing-size-row { display: flex; justify-content: space-between; gap: 24px; font-family: var(--display); font-size: 0.92rem; font-variant-numeric: tabular-nums; }
-  .wing-size-row b { color: var(--sauce); font-weight: 800; }
-  .wing-dry { font-family: var(--display); font-weight: 700; font-size: 0.95rem; line-height: 1.7; }
-  .flavor-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-  .flavor-list span {
-    font-family: var(--display); font-size: 0.78rem; letter-spacing: 0.02em;
-    background: var(--surface); border: 1px solid var(--line-strong); color: var(--ink);
-    padding: 6px 12px; border-radius: 999px;
+  .menu-block-desc { color: var(--muted); font-size: 0.98rem; margin: 0 0 18px; max-width: 62ch; }
+
+  /* House trays — steel pan matrix */
+  .tray-board {
+    background: var(--char-band); color: var(--char-ink);
+    border-top: 3px solid var(--sauce); border-bottom: 3px solid var(--sauce);
+    padding: 28px 22px 26px;
   }
-  .menu-foot { font-family: var(--display); font-size: 0.8rem; color: var(--muted); margin: 10px 0 0; }
-  .cuts .cut:nth-child(2n) { border-right: none; }
-  .cuts.three .cut:nth-child(3n) { border-right: none; }
-  @media (max-width: 620px) { .cuts, .cuts.three { grid-template-columns: 1fr; } .cut { border-right: none !important; } }
+  @media (min-width: 720px) {
+    .tray-board { padding: 34px 32px 30px; }
+  }
+  .tray-board .menu-kicker { color: var(--crust-bright); }
+  .tray-board h3 { color: var(--char-ink); }
+  .tray-board .menu-block-desc { color: var(--char-muted); }
+  .tray-matrix {
+    width: 100%; border-collapse: collapse; font-family: var(--display);
+    margin-top: 6px;
+  }
+  .tray-matrix th, .tray-matrix td {
+    padding: 14px 12px; text-align: right; vertical-align: baseline;
+    border-bottom: 1px solid var(--char-line); font-variant-numeric: tabular-nums;
+  }
+  .tray-matrix thead th {
+    font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--crust-bright); font-weight: 700; border-bottom: 1px solid color-mix(in srgb, var(--crust-bright) 45%, transparent);
+  }
+  .tray-matrix thead th:first-child,
+  .tray-matrix tbody th { text-align: left; }
+  .tray-matrix tbody th {
+    font-size: 1.05rem; font-weight: 800; color: var(--char-ink); padding-left: 0;
+  }
+  .tray-matrix tbody th small {
+    display: block; font-weight: 400; font-family: var(--body);
+    font-size: 0.88rem; color: var(--char-muted); margin-top: 3px;
+  }
+  .tray-matrix td {
+    font-size: 1.05rem; font-weight: 800; color: var(--crust-bright); width: 18%;
+  }
+  .tray-matrix td.na { color: color-mix(in srgb, var(--char-muted) 55%, transparent); font-weight: 600; font-size: 0.9rem; }
+  .topping-strip {
+    margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--char-line);
+    font-family: var(--display); font-size: 0.82rem; line-height: 1.65; color: var(--char-muted);
+  }
+  .topping-strip strong {
+    display: inline-block; color: var(--crust-bright); letter-spacing: 0.1em;
+    text-transform: uppercase; font-size: 0.68rem; margin-right: 10px;
+  }
+
+  /* Cut ledger — specialty / gourmet */
+  .cut-legend {
+    display: grid; grid-template-columns: 1fr 64px 64px 64px; gap: 8px;
+    font-family: var(--display); font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    padding: 0 0 8px; border-bottom: 1px solid var(--line-strong); margin-bottom: 2px;
+  }
+  .cut-legend span:not(:first-child),
+  .ledger-row .p { text-align: right; font-variant-numeric: tabular-nums; }
+  .cut-legend.two { grid-template-columns: 1fr 72px 72px; }
+  .ledger { display: flex; flex-direction: column; }
+  .ledger-row {
+    display: grid; grid-template-columns: 1fr 64px 64px 64px; gap: 8px 10px;
+    align-items: baseline; padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .ledger-row.two { grid-template-columns: 1fr 72px 72px; }
+  .ledger-row .name {
+    font-family: var(--display); font-weight: 700; font-size: 1.02rem; color: var(--ink);
+  }
+  .ledger-row .desc {
+    grid-column: 1 / -1; margin: -4px 0 0; color: var(--muted);
+    font-size: 0.9rem; line-height: 1.45; max-width: 58ch;
+  }
+  .ledger-row .p {
+    font-family: var(--display); font-weight: 800; font-size: 0.98rem; color: var(--sauce);
+  }
+  .ledger-row .p.na { color: var(--line-strong); font-weight: 600; }
+  @media (max-width: 560px) {
+    .cut-legend, .ledger-row { grid-template-columns: 1fr 52px 52px 52px; }
+    .cut-legend.two, .ledger-row.two { grid-template-columns: 1fr 58px 58px; }
+    .ledger-row .name { font-size: 0.95rem; }
+    .tray-matrix th, .tray-matrix td { padding: 12px 6px; }
+    .tray-matrix td { font-size: 0.95rem; width: auto; }
+  }
+
+  /* Wings spotlight */
+  .wings-board {
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 36px; align-items: start;
+    background: var(--surface); border: 1px solid var(--line-strong);
+    border-left: 4px solid var(--sauce); padding: 28px 26px;
+  }
+  .wings-award {
+    font-family: var(--display); font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--crust); margin: 0 0 10px;
+  }
+  .wing-sizes { list-style: none; margin: 18px 0 0; padding: 0; }
+  .wing-sizes li {
+    display: flex; justify-content: space-between; gap: 16px;
+    font-family: var(--display); font-size: 1.05rem; font-weight: 700;
+    padding: 10px 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums;
+  }
+  .wing-sizes li:last-child { border-bottom: none; }
+  .wing-sizes b { color: var(--sauce); font-weight: 800; }
+  .sauce-cols {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 22px 28px;
+    font-family: var(--display); font-size: 0.92rem; line-height: 1.75; color: var(--ink);
+  }
+  .sauce-cols h4 {
+    font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 6px; font-weight: 700;
+  }
+  .sauce-cols p { margin: 0; }
+  .wings-board .lede { color: var(--muted); font-size: 0.98rem; margin: 0; max-width: 36ch; }
+  @media (max-width: 720px) {
+    .wings-board { grid-template-columns: 1fr; gap: 22px; padding: 22px 18px; }
+  }
+
+  /* Compact plate ledger (stromboli, starters, salads, subs) */
+  .plate-list { display: flex; flex-direction: column; }
+  .plate {
+    display: grid; grid-template-columns: 1fr auto; gap: 4px 18px;
+    padding: 12px 0; border-bottom: 1px solid var(--line); align-items: baseline;
+  }
+  .plate .name { font-family: var(--display); font-weight: 700; font-size: 1rem; }
+  .plate .price {
+    font-family: var(--display); font-weight: 800; font-size: 1rem;
+    color: var(--sauce); font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .plate .desc {
+    grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.45;
+  }
+  .menu-split {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px 48px; margin-top: 44px;
+  }
+  .menu-split .menu-block { margin-top: 0; }
+  .menu-foot {
+    font-family: var(--display); font-size: 0.8rem; color: var(--muted);
+    margin: 22px 0 0; padding-top: 14px; border-top: 1px solid var(--line);
+  }
+  @media (max-width: 720px) { .menu-split { grid-template-columns: 1fr; gap: 36px; } }
+
+  /* ---------- What's good here ---------- */
+  .picks {
+    border-bottom: 1px solid var(--line); background: var(--surface);
+  }
+  .picks-inner { max-width: var(--maxw); margin: 0 auto; padding: 40px 24px 36px; }
+  .picks-head { margin-bottom: 18px; }
+  .picks-head .eyebrow { margin-bottom: 6px; }
+  .picks-head h2 {
+    font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem); line-height: 1; margin: 0;
+  }
+  .picks-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    border: 1px solid var(--line-strong);
+  }
+  .pick {
+    display: block; padding: 22px 20px; text-decoration: none; color: inherit;
+    border-right: 1px solid var(--line); background: var(--surface);
+    transition: background 0.15s ease;
+  }
+  .pick:last-child { border-right: none; }
+  .pick:hover { background: var(--surface-2); }
+  .pick .kicker {
+    font-family: var(--display); font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--sauce); margin: 0 0 8px;
+  }
+  .pick h3 {
+    font-family: var(--display); font-weight: 800; text-transform: uppercase;
+    letter-spacing: -0.02em; font-size: 1.25rem; margin: 0 0 8px; line-height: 1.1;
+  }
+  .pick p { margin: 0 0 12px; color: var(--muted); font-size: 0.95rem; line-height: 1.45; max-width: 28ch; }
+  .pick .go {
+    font-family: var(--display); font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink);
+  }
+  .pick:hover .go { color: var(--sauce); }
+  @media (max-width: 760px) {
+    .picks-grid { grid-template-columns: 1fr; }
+    .pick { border-right: none; border-bottom: 1px solid var(--line); }
+    .pick:last-child { border-bottom: none; }
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq { padding: 56px 0 20px; }
+  .faq-list { margin-top: 18px; border: 1px solid var(--line-strong); background: var(--surface); }
+  .faq-item {
+    padding: 18px 22px; border-bottom: 1px solid var(--line);
+  }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-item h3 {
+    font-family: var(--display); font-weight: 800; font-size: 1.02rem;
+    letter-spacing: -0.01em; margin: 0 0 6px;
+  }
+  .faq-item p { margin: 0; color: var(--muted); font-size: 0.98rem; line-height: 1.5; max-width: 62ch; }
+  .faq-item a { color: var(--sauce); font-weight: 700; text-decoration: none; }
+  .faq-item a:hover { text-decoration: underline; }
 
   /* ---------- Story ---------- */
-  .story { margin-top: 72px; background: var(--char-band); color: var(--char-ink); border-top: 3px solid var(--crust); border-bottom: 3px solid var(--crust); }
-  .story-inner { max-width: var(--maxw); margin: 0 auto; padding: 66px 24px; display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 44px; align-items: center; }
+  .story { margin-top: 0; background: var(--char-band); color: var(--char-ink); border-top: none; border-bottom: 3px solid var(--crust); }
+  .story-inner { max-width: var(--maxw); margin: 0 auto; padding: 66px 24px; display: grid; grid-template-columns: 0.95fr 1.05fr; gap: 44px; align-items: center; }
+  .story-photo { margin: 0; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--char-line); }
+  .story-photo img { width: 100%; height: auto; display: block; aspect-ratio: 4 / 3; object-fit: cover; }
   .story h2 { font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase; font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1; }
   .story h2 .accent { color: var(--sauce); }
   .story p { font-size: 1.12rem; line-height: 1.65; color: color-mix(in srgb, var(--char-ink) 90%, transparent); margin: 0 0 16px; }
@@ -361,7 +608,142 @@
   .visit-links { display: flex; flex-direction: column; gap: 12px; margin-top: 22px; }
   .visit-link { font-family: var(--display); font-weight: 700; font-size: 0.92rem; text-decoration: none; color: var(--sauce); display: inline-flex; align-items: center; gap: 8px; }
   .visit-link:hover { color: var(--sauce-deep); }
-  @media (max-width: 700px) { .visit-inner { grid-template-columns: 1fr; } .visit-col:first-child { border-right: none; border-bottom: 1px solid var(--line); } }
+  .amenity-strip {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 18px;
+    border: 1px solid var(--line-strong); background: var(--surface);
+  }
+  .amenity-strip span {
+    font-family: var(--display); font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink);
+    padding: 12px 16px; text-align: center;
+    border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .amenity-strip span:nth-child(3n) { border-right: none; }
+  .amenity-strip span:nth-last-child(-n+3) { border-bottom: none; }
+  .trust-row {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px;
+  }
+  .trust-chip {
+    font-family: var(--display); font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.04em; text-decoration: none; color: var(--ink);
+    border: 1px solid var(--line-strong); padding: 8px 12px;
+    background: var(--ground);
+  }
+  .trust-chip:hover { border-color: var(--sauce); color: var(--sauce); }
+  .trust-chip em { font-style: normal; color: var(--sauce); font-weight: 800; }
+  @media (max-width: 700px) {
+    .visit-inner { grid-template-columns: 1fr; }
+    .visit-col:first-child { border-right: none; border-bottom: 1px solid var(--line); }
+    .amenity-strip { grid-template-columns: repeat(2, 1fr); }
+    .amenity-strip span { border-right: 1px solid var(--line); }
+    .amenity-strip span:nth-child(3n) { border-right: 1px solid var(--line); }
+    .amenity-strip span:nth-child(2n) { border-right: none; }
+    .amenity-strip span:nth-last-child(-n+3) { border-bottom: 1px solid var(--line); }
+    .amenity-strip span:nth-last-child(-n+2) { border-bottom: none; }
+    /* lone last row item (odd count) — center under the pair above */
+    .amenity-strip span:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      border-right: none; border-bottom: none;
+      justify-self: center; width: 100%;
+      border-top: 1px solid var(--line);
+    }
+  }
+
+  /* ---------- Signature dish ---------- */
+  .signature {
+    display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 28px; align-items: center;
+    background: var(--surface); border: 1px solid var(--line-strong);
+    border-top: 3px solid var(--sauce); padding: 26px 28px; margin-bottom: 28px;
+  }
+  .signature .menu-kicker { margin-bottom: 6px; }
+  .signature h3 {
+    font-family: var(--display); font-weight: 800; text-transform: uppercase;
+    letter-spacing: -0.02em; font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin: 0 0 10px; line-height: 1;
+  }
+  .signature p { margin: 0 0 14px; color: var(--muted); font-size: 1.02rem; line-height: 1.55; max-width: 40ch; }
+  .signature-cuts {
+    display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--display);
+    font-size: 0.9rem; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .signature-cuts b { color: var(--sauce); font-weight: 800; }
+  .signature-aside {
+    font-family: var(--display); font-size: 0.95rem; line-height: 1.55;
+    color: var(--ink); border-left: 3px solid var(--crust); padding: 4px 0 4px 18px;
+  }
+  .signature-aside cite {
+    display: block; margin-top: 10px; font-style: normal; font-size: 0.72rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 700;
+  }
+  @media (max-width: 720px) { .signature { grid-template-columns: 1fr; padding: 22px 18px; } }
+
+  /* ---------- Dessert signature ---------- */
+  .dessert {
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 28px; align-items: center;
+    background: var(--char-band); color: var(--char-ink);
+    border: 1px solid var(--char-line); border-top: 3px solid var(--crust);
+    padding: 26px 28px; margin: 8px 0 28px;
+  }
+  .dessert .menu-kicker { color: var(--crust-bright); margin-bottom: 6px; }
+  .dessert h3 {
+    font-family: var(--display); font-weight: 800; text-transform: uppercase;
+    letter-spacing: -0.02em; font-size: clamp(1.5rem, 3.2vw, 2rem); margin: 0 0 10px; line-height: 1;
+  }
+  .dessert p { margin: 0 0 12px; color: var(--char-muted); font-size: 1.02rem; line-height: 1.55; max-width: 42ch; }
+  .dessert .ask {
+    font-family: var(--display); font-size: 0.78rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--crust-bright);
+  }
+  .dessert-aside {
+    font-family: var(--display); font-size: 0.95rem; line-height: 1.55;
+    color: var(--char-ink); border-left: 3px solid var(--crust); padding: 4px 0 4px 18px;
+  }
+  .dessert-aside cite {
+    display: block; margin-top: 10px; font-style: normal; font-size: 0.72rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--char-muted); font-weight: 700;
+  }
+  @media (max-width: 720px) { .dessert { grid-template-columns: 1fr; padding: 22px 18px; } }
+
+  /* ---------- Neighborhood voice ---------- */
+  .voice { padding: 64px 0 20px; }
+  .voice-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    border: 1px solid var(--line-strong); background: var(--surface); margin-top: 22px;
+  }
+  .voice-card {
+    padding: 28px 24px; border-right: 1px solid var(--line);
+  }
+  .voice-card:last-child { border-right: none; }
+  .voice-card blockquote {
+    margin: 0; font-size: 1.12rem; line-height: 1.5; color: var(--ink);
+  }
+  .voice-card cite {
+    display: block; margin-top: 16px; font-family: var(--display); font-style: normal;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  }
+  .voice-foot {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px;
+    margin-top: 18px;
+  }
+  .voice-foot p {
+    margin: 0; font-family: var(--display); font-size: 0.78rem; color: var(--muted); max-width: 52ch;
+  }
+  .voice-links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .locals-order {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px;
+    margin: 28px 0 0; padding: 16px 0 0; border-top: 1px solid var(--line);
+    font-family: var(--display); font-size: 0.88rem;
+  }
+  .locals-order strong {
+    font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sauce);
+  }
+  .locals-order a { color: var(--ink); text-decoration: none; font-weight: 700; }
+  .locals-order a:hover { color: var(--sauce); }
+  .locals-order .sep { color: var(--line-strong); }
+  @media (max-width: 820px) {
+    .voice-grid { grid-template-columns: 1fr; }
+    .voice-card { border-right: none; border-bottom: 1px solid var(--line); }
+    .voice-card:last-child { border-bottom: none; }
+  }
 
   /* ---------- Sticky order bar ---------- */
   .orderbar {
@@ -402,6 +784,8 @@
     .reveal, .scroll-in { opacity: 1 !important; transform: none !important; }
   }
 </style>
+</head>
+<body>
 
 <div class="topbar">
   <div class="topbar-inner">
@@ -410,8 +794,10 @@
       <span class="status-pill" id="statusPill"><span class="beat"></span><span id="statusPillText">Hours</span></span>
     </div>
     <nav class="topbar-meta">
+      <a class="nav-link" href="#picks">What’s good</a>
       <a class="nav-link" href="#order">How to order</a>
       <a class="nav-link" href="#menu">Menu</a>
+      <a class="nav-link" href="#faq">FAQ</a>
       <a class="nav-link" href="#visit">Visit</a>
       <span class="sep"></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch color theme">Dark</button>
@@ -421,66 +807,81 @@
 </div>
 
 <header class="hero" id="top">
-  <div class="hero-grid-bg"></div>
+  <div class="hero-media" aria-hidden="true">
+    <img src="images/hero_pizza.jpg" alt="Close-up of pizza from Jigsy's Old Forge Pizza in Enola, PA" width="1600" height="1200" fetchpriority="high">
+  </div>
+  <div class="hero-scrim" aria-hidden="true"></div>
   <div class="hero-inner">
-    <div>
-      <span class="badge reveal d1"><span class="dot"></span>Simply the Best Wings — Harrisburg Magazine 2023</span>
-      <h1 class="reveal d1">Jigsy<span class="apos">'</span>s<br>Old Forge<br>Pizza</h1>
-      <p class="hero-sub reveal d2">Home of Old Forge Style Pizza · Est. 1999 · Enola, PA</p>
-      <p class="hero-status reveal d2" id="heroStatus"><span class="beat"></span><span id="heroStatusText">Checking today's hours…</span></p>
-      <p class="hero-lede reveal d2">Real Old Forge–style trays, award-winning wings, and cold local taps — served up in a made-over dining room with a patio and live music.</p>
-      <div class="cta-row reveal d3">
-        <a class="btn btn-primary" href="#menu">See the menu →</a>
-        <a class="btn btn-ghost" href="tel:+17177327708">Call · (717) 732-7708</a>
-      </div>
-    </div>
-    <div class="tray-art reveal d4" aria-hidden="true">
-      <svg viewBox="0 0 320 380" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="pan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3330"/><stop offset="1" stop-color="#211c19"/></linearGradient>
-          <linearGradient id="sauceHero" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6432E"/><stop offset="1" stop-color="#992C1D"/></linearGradient>
-        </defs>
-        <rect x="8" y="8" width="304" height="364" rx="14" fill="url(#pan)"/>
-        <rect x="22" y="22" width="276" height="336" rx="8" fill="url(#sauceHero)"/>
-        <rect x="22" y="22" width="276" height="336" rx="8" fill="none" stroke="#E7B85E" stroke-width="6" opacity="0.55"/>
-        <g stroke="#2b1c14" stroke-width="3" opacity="0.5">
-          <line x1="114" y1="22" x2="114" y2="358"/><line x1="206" y1="22" x2="206" y2="358"/>
-          <line x1="22" y1="106" x2="298" y2="106"/><line x1="22" y1="190" x2="298" y2="190"/><line x1="22" y1="274" x2="298" y2="274"/>
-        </g>
-        <g>
-          <circle cx="66" cy="62" r="15" fill="#8C2A1E"/><circle cx="160" cy="66" r="15" fill="#8C2A1E"/><circle cx="252" cy="60" r="14" fill="#8C2A1E"/>
-          <circle cx="70" cy="150" r="14" fill="#8C2A1E"/><circle cx="250" cy="148" r="15" fill="#8C2A1E"/><circle cx="160" cy="232" r="15" fill="#8C2A1E"/>
-          <circle cx="66" cy="316" r="14" fill="#8C2A1E"/><circle cx="254" cy="320" r="15" fill="#8C2A1E"/>
-          <circle cx="158" cy="150" r="9" fill="#E7B85E" opacity="0.7"/><circle cx="112" cy="300" r="8" fill="#E7B85E" opacity="0.6"/>
-        </g>
-      </svg>
+    <h1>Jigsy<span class="apos">'</span>s<br>Old Forge<br>Pizza</h1>
+    <p class="hero-sub">Best pizza &amp; wings · Enola, PA · Est. 1999</p>
+    <p class="hero-status" id="heroStatus"><span class="beat"></span><span id="heroStatusText">Checking today's hours…</span></p>
+    <p class="hero-lede">Trays cut in squares. Wings that won the town. Call it in.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="tel:+17177327708">Call · (717) 732-7708</a>
+      <a class="btn btn-ghost" href="#menu">See the menu →</a>
     </div>
   </div>
 </header>
 
 <div class="marquee" aria-hidden="true">
   <div class="marquee-track" id="marquee">
-    <span><span class="star">★</span> Simply the Best Wings 2023 <span class="star">★</span> Red or White <span class="star">★</span> By the Tray <span class="star">★</span> Cut in Squares <span class="star">★</span> Cold Local Taps <span class="star">★</span> Patio &amp; Live Music </span>
-    <span><span class="star">★</span> Simply the Best Wings 2023 <span class="star">★</span> Red or White <span class="star">★</span> By the Tray <span class="star">★</span> Cut in Squares <span class="star">★</span> Cold Local Taps <span class="star">★</span> Patio &amp; Live Music </span>
+    <span><span class="star">★</span> Simply the Best Wings 2023 <span class="star">★</span> Chick Fil “J” <span class="star">★</span> Red or White <span class="star">★</span> By the Tray <span class="star">★</span> Cut in Squares <span class="star">★</span> Cold Local Taps <span class="star">★</span> Patio <span class="star">★</span> Downstairs Lounge </span>
+    <span><span class="star">★</span> Simply the Best Wings 2023 <span class="star">★</span> Chick Fil “J” <span class="star">★</span> Red or White <span class="star">★</span> By the Tray <span class="star">★</span> Cut in Squares <span class="star">★</span> Cold Local Taps <span class="star">★</span> Patio <span class="star">★</span> Downstairs Lounge </span>
   </div>
 </div>
 
-<section class="oldforge">
-  <div class="oldforge-inner">
-    <div class="of-cell scroll-in">
-      <div class="of-num">Red or White</div>
-      <h3>Red, or white</h3>
-      <p>Red is classic marinara and cheese. White skips the sauce — cheese between the crusts, ordered single crust or double. No "supreme."</p>
+<section class="picks" id="picks">
+  <div class="picks-inner">
+    <div class="picks-head scroll-in">
+      <p class="eyebrow">Start here</p>
+      <h2>What’s good here</h2>
     </div>
-    <div class="of-cell scroll-in">
-      <div class="of-num">By the Tray</div>
-      <h3>Not a pie — a tray</h3>
-      <p>We bake rectangular in a seasoned steel pan, then load it with any of fifteen toppings. It's how Old Forge has always done it.</p>
+    <div class="picks-grid scroll-in">
+      <a class="pick" href="#chick-fil-j">
+        <p class="kicker">House signature</p>
+        <h3>Chick Fil “J”</h3>
+        <p>Garlic sauce, crispy chicken, dill pickles on an Old Forge tray. The one guests name first.</p>
+        <span class="go">See it on the board →</span>
+      </a>
+      <a class="pick" href="#menu-wings">
+        <p class="kicker">Harrisburg Magazine 2023</p>
+        <h3>Simply the Best Wings</h3>
+        <p>Jumbo wings, house tosses — garlic parm, spicy bleu, sweet heat. Celery on the side.</p>
+        <span class="go">Pick a count →</span>
+      </a>
+      <a class="pick" href="#peanut-butter-pie">
+        <p class="kicker">Save room</p>
+        <h3>Peanut Butter Pie</h3>
+        <p>Cold, rich, and the reason tables linger. Ask for a slice when you call it in.</p>
+        <span class="go">Ask when you order →</span>
+      </a>
     </div>
-    <div class="of-cell scroll-in">
-      <div class="of-num">3 · 6 · 12</div>
-      <h3>Counted in cuts</h3>
-      <p>A tray comes sliced into square "cuts" — grab 3, split a 6, or feed the table with a full 12. Corners go first; everyone fights for those.</p>
+  </div>
+</section>
+
+<section class="oldforge" id="old-forge">
+  <div class="oldforge-wrap">
+    <div class="oldforge-head scroll-in">
+      <p class="eyebrow">The style</p>
+      <h2>Why Old Forge</h2>
+      <p>Not New York. Not Chicago. Rectangular steel-pan pizza cut into squares — light crust, crisp bottom, no flop. Enola’s been eating it this way since 1999.</p>
+    </div>
+    <div class="oldforge-inner">
+      <div class="of-cell scroll-in">
+        <div class="of-num">Red or white</div>
+        <h3>Pick a base</h3>
+        <p>Red is marinara and cheese. White skips the sauce — cheese between the crusts, single or double. No “supreme.”</p>
+      </div>
+      <div class="of-cell scroll-in">
+        <div class="of-num">By the tray</div>
+        <h3>Not a pie</h3>
+        <p>We bake rectangular in a seasoned steel pan, then load any of fifteen toppings. That’s how Old Forge has always done it.</p>
+      </div>
+      <div class="of-cell scroll-in">
+        <div class="of-num">3 · 6 · 12</div>
+        <h3>Counted in cuts</h3>
+        <p>Square “cuts,” not slices. Grab 3, split a 6, or feed the table with a 12. Corners go first.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -505,148 +906,297 @@
       </div>
       <div class="order-step">
         <div class="of-num">03</div>
-        <div><h3>Call &amp; grab it</h3><p>Ring us for pickup or take-out — or come sit down for the patio and live music.</p></div>
+        <div><h3>Call &amp; grab it</h3><p>Ring us for pickup or take-out — or come sit down for the patio and the downstairs lounge.</p></div>
       </div>
     </div>
   </div>
 </section>
 
-<main class="wrap" id="menu">
+<main class="wrap menu-shell" id="menu">
   <div class="section-head">
-    <div><p class="eyebrow">The board</p><h2>The Menu</h2></div>
+    <div><p class="eyebrow">Ordered by the tray</p><h2>The Board</h2></div>
     <span class="note">Nov 2025 · prices subject to change</span>
   </div>
 
-  <div class="menu-block scroll-in">
-    <h3 class="menu-block-title">Old Forge Pizza <span class="tag red">Red</span> <span class="tag">White</span></h3>
-    <p class="menu-block-desc">The house style, baked in a steel pan and cut into squares — 3, 6, or 12 cuts. Add any topping ($): pepperoni, sausage, ham, green / sweet / hot peppers, onion, tomato, mushrooms, broccoli, bacon, chicken, pineapple, spinach or garlic.</p>
-    <div class="cuts three">
-      <div class="cut"><div class="cut-top"><span class="cut-name">Traditional Red</span></div><p class="cut-desc">sauce, cheese</p><div class="sizes"><span>3 · <b>7.49</b></span><span>6 · <b>14.99</b></span><span>12 · <b>18.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Single White</span></div><p class="cut-desc">single crust, cheese</p><div class="sizes"><span>3 · <b>8.49</b></span><span>6 · <b>15.99</b></span><span>12 · <b>20.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Double White</span></div><p class="cut-desc">double crust, cheese</p><div class="sizes"><span>6 · <b>18.99</b></span><span>12 · <b>26.99</b></span></div></div>
+  <nav class="menu-jump" aria-label="Menu sections">
+    <a href="#menu-trays">House trays</a>
+    <a href="#menu-specialty">Specialty</a>
+    <a href="#menu-gourmet">Gourmet</a>
+    <a href="#menu-wings">Wings</a>
+    <a href="#menu-stromboli">Stromboli</a>
+    <a href="#menu-starters">Starters</a>
+    <a href="#menu-salads">Salads</a>
+    <a href="#menu-subs">Subs</a>
+    <a href="#peanut-butter-pie">Dessert</a>
+  </nav>
+
+  <div class="menu-block scroll-in" id="menu-trays">
+    <div class="tray-board">
+      <p class="menu-kicker">House style · steel pan</p>
+      <h3>Old Forge trays</h3>
+      <p class="menu-block-desc">Not a pie — a tray. Rectangular, cut into squares. Light crust, crisp bottom, no flop. Order red or white, then pick how many cuts you want.</p>
+      <table class="tray-matrix">
+        <thead>
+          <tr>
+            <th scope="col">Style</th>
+            <th scope="col">3 cuts</th>
+            <th scope="col">6 cuts</th>
+            <th scope="col">12 cuts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Traditional Red<small>sauce, cheese</small></th>
+            <td>7.49</td><td>14.99</td><td>18.99</td>
+          </tr>
+          <tr>
+            <th scope="row">Single White<small>single crust, cheese</small></th>
+            <td>8.49</td><td>15.99</td><td>20.99</td>
+          </tr>
+          <tr>
+            <th scope="row">Double White<small>double crust, cheese</small></th>
+            <td class="na">—</td><td>18.99</td><td>26.99</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="topping-strip"><strong>Add a topping</strong> pepperoni · sausage · ham · green / sweet / hot peppers · onion · tomato · mushrooms · broccoli · bacon · chicken · pineapple · spinach · garlic</p>
     </div>
   </div>
 
-  <div class="menu-block scroll-in">
-    <h3 class="menu-block-title">Specialty Pizza</h3>
-    <p class="menu-block-desc">Single crust · 3 / 6 / 12 cuts.</p>
-    <div class="cuts">
-      <div class="cut"><div class="cut-top"><span class="cut-name">Tomato &amp; Garlic</span></div><p class="cut-desc">cheese, tomato, fresh garlic</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>16.49</b></span><span>12 · <b>24.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Chick Fil "J"</span></div><p class="cut-desc">buttery garlic sauce, crispy chicken, sliced pickles, cheese</p><div class="sizes"><span>3 · <b>11.99</b></span><span>6 · <b>18.49</b></span><span>12 · <b>27.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Chicken Bacon Ranch</span></div><p class="cut-desc">cheese, house-made ranch, grilled chicken, crispy bacon</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Buffalo Chicken</span></div><p class="cut-desc">hot sauce, cheese, crispy chicken</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Meatlovers</span></div><p class="cut-desc">sauce, cheese, ham, pepperoni, sausage, bacon</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Spinach &amp; Tomato</span></div><p class="cut-desc">cheese, spinach, tomato</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>16.49</b></span><span>12 · <b>24.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Meatball</span></div><p class="cut-desc">sauce, cheese, house-made meatballs, fresh parmesan</p><div class="sizes"><span>3 · <b>11.99</b></span><span>6 · <b>18.99</b></span><span>12 · <b>28.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Chicken Bruschetta</span></div><p class="cut-desc">light sauce, cheese, chicken, tomato, spinach, red onion, garlic</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Hot Oil Pepperoni</span></div><p class="cut-desc">sauce, cheese, pepperoni, Calabrian pepper oil</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Rustico</span></div><p class="cut-desc">cheese, pepperoni, sausage, green pepper, mushroom, onion</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Hawaiian</span></div><p class="cut-desc">cheese, ham, pineapple</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
+  <div class="menu-block scroll-in" id="menu-specialty">
+    <p class="menu-kicker">Single crust</p>
+    <h3>Specialty trays</h3>
+    <p class="menu-block-desc">Same pan, same square cuts — loaded. Prices by cut count.</p>
+
+    <div class="signature" id="chick-fil-j">
+      <div>
+        <p class="menu-kicker">House signature</p>
+        <h3>Chick Fil “J”</h3>
+        <p>Buttery garlic sauce, crispy chicken, sliced pickles, and cheese on an Old Forge tray. The one guests keep naming when they talk about coming back.</p>
+        <div class="signature-cuts"><span>3 · <b>11.99</b></span><span>6 · <b>18.49</b></span><span>12 · <b>27.99</b></span></div>
+      </div>
+      <aside class="signature-aside">
+        “We had the Chick Fil J pizza and it was amazing. Thick crust, gooey cheese, garlic sauce with crunchy dill pickles and chicken.”
+        <cite>Angela H. · guest</cite>
+      </aside>
+    </div>
+
+    <div class="cut-legend" aria-hidden="true"><span>Tray</span><span>3</span><span>6</span><span>12</span></div>
+    <div class="ledger">
+      <div class="ledger-row"><span class="name">Tomato &amp; Garlic</span><span class="p">10.99</span><span class="p">16.49</span><span class="p">24.99</span><p class="desc">cheese, tomato, fresh garlic</p></div>
+      <div class="ledger-row"><span class="name">Chick Fil “J”</span><span class="p">11.99</span><span class="p">18.49</span><span class="p">27.99</span><p class="desc">buttery garlic sauce, crispy chicken, sliced pickles, cheese</p></div>
+      <div class="ledger-row"><span class="name">Chicken Bacon Ranch</span><span class="p">10.99</span><span class="p">17.49</span><span class="p">26.99</span><p class="desc">cheese, house-made ranch, grilled chicken, crispy bacon</p></div>
+      <div class="ledger-row"><span class="name">Buffalo Chicken</span><span class="p">10.99</span><span class="p">17.49</span><span class="p">26.99</span><p class="desc">hot sauce, cheese, crispy chicken</p></div>
+      <div class="ledger-row"><span class="name">Meatlovers</span><span class="p">10.99</span><span class="p">17.49</span><span class="p">26.99</span><p class="desc">sauce, cheese, ham, pepperoni, sausage, bacon</p></div>
+      <div class="ledger-row"><span class="name">Spinach &amp; Tomato</span><span class="p">10.99</span><span class="p">16.49</span><span class="p">24.99</span><p class="desc">cheese, spinach, tomato</p></div>
+      <div class="ledger-row"><span class="name">Meatball</span><span class="p">11.99</span><span class="p">18.99</span><span class="p">28.99</span><p class="desc">sauce, cheese, house-made meatballs, fresh parmesan</p></div>
+      <div class="ledger-row"><span class="name">Chicken Bruschetta</span><span class="p">10.99</span><span class="p">17.49</span><span class="p">26.99</span><p class="desc">light sauce, cheese, chicken, tomato, spinach, red onion, garlic</p></div>
+      <div class="ledger-row"><span class="name">Hot Oil Pepperoni</span><span class="p">10.99</span><span class="p">17.49</span><span class="p">26.99</span><p class="desc">sauce, cheese, pepperoni, Calabrian pepper oil</p></div>
+      <div class="ledger-row"><span class="name">Rustico</span><span class="p">10.99</span><span class="p">17.49</span><span class="p">26.99</span><p class="desc">cheese, pepperoni, sausage, green pepper, mushroom, onion</p></div>
+      <div class="ledger-row"><span class="name">Hawaiian</span><span class="p">10.99</span><span class="p">17.49</span><span class="p">26.99</span><p class="desc">cheese, ham, pineapple</p></div>
     </div>
   </div>
 
-  <div class="menu-block scroll-in">
-    <h3 class="menu-block-title">Gourmet Pizza</h3>
-    <p class="menu-block-desc">Double crust · 6 / 12 cuts.</p>
-    <div class="cuts">
-      <div class="cut"><div class="cut-top"><span class="cut-name">Buffalo Chicken</span></div><p class="cut-desc">hot sauce, crispy chicken, cheese</p><div class="sizes"><span>6 · <b>20.49</b></span><span>12 · <b>30.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Rustico</span></div><p class="cut-desc">cheese, pepperoni, sausage, green pepper, mushroom, onion</p><div class="sizes"><span>6 · <b>20.49</b></span><span>12 · <b>30.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Tomato &amp; Garlic</span></div><p class="cut-desc">cheese, tomato, garlic</p><div class="sizes"><span>6 · <b>19.49</b></span><span>12 · <b>29.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Broccoli</span></div><p class="cut-desc">cheese, broccoli</p><div class="sizes"><span>6 · <b>19.49</b></span><span>12 · <b>29.99</b></span></div></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Pierogi</span></div><p class="cut-desc">cheese, pierogi, butter, onion</p><div class="sizes"><span>6 · <b>20.49</b></span><span>12 · <b>30.99</b></span></div></div>
+  <div class="menu-block scroll-in" id="menu-gourmet">
+    <p class="menu-kicker">Double crust</p>
+    <h3>Gourmet trays</h3>
+    <p class="menu-block-desc">Stuffed double-crust trays — 6 or 12 cuts only.</p>
+    <div class="cut-legend two" aria-hidden="true"><span>Tray</span><span>6</span><span>12</span></div>
+    <div class="ledger">
+      <div class="ledger-row two"><span class="name">Buffalo Chicken</span><span class="p">20.49</span><span class="p">30.99</span><p class="desc">hot sauce, crispy chicken, cheese</p></div>
+      <div class="ledger-row two"><span class="name">Rustico</span><span class="p">20.49</span><span class="p">30.99</span><p class="desc">cheese, pepperoni, sausage, green pepper, mushroom, onion</p></div>
+      <div class="ledger-row two"><span class="name">Tomato &amp; Garlic</span><span class="p">19.49</span><span class="p">29.99</span><p class="desc">cheese, tomato, garlic</p></div>
+      <div class="ledger-row two"><span class="name">Broccoli</span><span class="p">19.49</span><span class="p">29.99</span><p class="desc">cheese, broccoli</p></div>
+      <div class="ledger-row two"><span class="name">Pierogi</span><span class="p">20.49</span><span class="p">30.99</span><p class="desc">cheese, pierogi, butter, onion</p></div>
     </div>
   </div>
 
-  <div class="menu-block scroll-in">
-    <h3 class="menu-block-title">Wings <span class="tag red">2023 Best</span></h3>
-    <p class="menu-block-desc">Voted Simply the Best by Harrisburg Magazine. Add celery, ranch or bleu cheese 1.00 ea.</p>
-    <div class="wing-flavors">
-      <div class="wing-dry">Hot · Mild · BBQ<br>Old Bay · Honey BBQ · Teriyaki</div>
-      <div class="wing-sizes">
-        <div class="wing-size-row"><span>5 Wings</span><b>7.99</b></div>
-        <div class="wing-size-row"><span>10 Wings</span><b>12.99</b></div>
-        <div class="wing-size-row"><span>20 Wings</span><b>25.99</b></div>
-        <div class="wing-size-row"><span>30 Wings</span><b>34.99</b></div>
+  <div class="menu-block scroll-in" id="menu-wings">
+    <p class="menu-kicker">Harrisburg Magazine 2023</p>
+    <h3>Simply the Best Wings</h3>
+    <div class="wings-board">
+      <div>
+        <p class="wings-award">Voted Simply the Best · Harrisburg Magazine</p>
+        <p class="lede">Fresh jumbo wings. Pick a count, pick a sauce. Celery, ranch, or bleu cheese +1.00 each.</p>
+        <ul class="wing-sizes">
+          <li><span>5 wings</span><b>7.99</b></li>
+          <li><span>10 wings</span><b>12.99</b></li>
+          <li><span>20 wings</span><b>25.99</b></li>
+          <li><span>30 wings</span><b>34.99</b></li>
+        </ul>
+      </div>
+      <div class="sauce-cols">
+        <div>
+          <h4>Classic toss</h4>
+          <p>Hot<br>Mild<br>BBQ<br>Old Bay<br>Honey BBQ<br>Teriyaki</p>
+        </div>
+        <div>
+          <h4>House flavors</h4>
+          <p>Classic Buffalo<br>Garlic Parm<br>Spicy Bleu Cheese<br>Spicy Ranch<br>Chicken Bacon Ranch<br>Salt &amp; Vinegar<br>Buffalo Bay<br>Hot Garlic<br>Sweet Heat</p>
+        </div>
       </div>
     </div>
-    <div class="flavor-list">
-      <span>Classic Buffalo</span><span>Garlic Parm</span><span>Spicy Bleu Cheese</span><span>Spicy Ranch</span>
-      <span>Chicken Bacon Ranch</span><span>Salt &amp; Vinegar</span><span>Buffalo Bay</span><span>Hot Garlic</span><span>Sweet Heat</span>
+  </div>
+
+  <div class="menu-block scroll-in" id="menu-stromboli">
+    <p class="menu-kicker">Rolled &amp; flat</p>
+    <h3>Stromboli &amp; flatbreads</h3>
+    <div class="plate-list">
+      <div class="plate"><span class="name">Traditional Stromboli</span><span class="price">18.99</span><p class="desc">ham, pepperoni, sausage, onion, mushroom, green &amp; sweet peppers, hot peppers</p></div>
+      <div class="plate"><span class="name">Cheesesteak Stromboli</span><span class="price">19.99</span><p class="desc">cheesesteak, onion, mushroom, green peppers</p></div>
+      <div class="plate"><span class="name">Buffalo Chicken Stromboli</span><span class="price">19.99</span><p class="desc">crispy chicken, hot sauce, cheese</p></div>
+      <div class="plate"><span class="name">Veggie Stromboli</span><span class="price">18.99</span><p class="desc">tomato, spinach, garlic, cheese</p></div>
+      <div class="plate"><span class="name">Traditional Red Flatbread</span><span class="price">10.99</span><p class="desc">sauce, cheese</p></div>
+      <div class="plate"><span class="name">BBQ Chicken Flatbread</span><span class="price">12.49</span><p class="desc">bbq sauce, cheese, grilled chicken, red onion, ranch</p></div>
+      <div class="plate"><span class="name">Chicken Bruschetta Flatbread</span><span class="price">12.49</span><p class="desc">light sauce, chicken, cheese, tomato, spinach, red onion, garlic</p></div>
+      <div class="plate"><span class="name">Veggie Flatbread</span><span class="price">11.49</span><p class="desc">spinach, tomato, garlic, cheese</p></div>
     </div>
   </div>
 
-  <div class="menu-block scroll-in">
-    <h3 class="menu-block-title">Stromboli &amp; Flatbreads</h3>
-    <div class="cuts">
-      <div class="cut"><div class="cut-top"><span class="cut-name">Traditional Stromboli</span><span class="cut-price">18.99</span></div><p class="cut-desc">ham, pepperoni, sausage, onion, mushroom, green &amp; sweet peppers, hot peppers</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Cheesesteak Stromboli</span><span class="cut-price">19.99</span></div><p class="cut-desc">cheesesteak, onion, mushroom, green peppers</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Buffalo Chicken Stromboli</span><span class="cut-price">19.99</span></div><p class="cut-desc">crispy chicken, hot sauce, cheese</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Veggie Stromboli</span><span class="cut-price">18.99</span></div><p class="cut-desc">tomato, spinach, garlic, cheese</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Traditional Red Flatbread</span><span class="cut-price">10.99</span></div><p class="cut-desc">sauce, cheese</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">BBQ Chicken Flatbread</span><span class="cut-price">12.49</span></div><p class="cut-desc">bbq sauce, cheese, grilled chicken, red onion, ranch</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Chicken Bruschetta Flatbread</span><span class="cut-price">12.49</span></div><p class="cut-desc">light sauce, chicken, cheese, tomato, spinach, red onion, garlic</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Veggie Flatbread</span><span class="cut-price">11.49</span></div><p class="cut-desc">spinach, tomato, garlic, cheese</p></div>
+  <div class="menu-split">
+    <div class="menu-block scroll-in" id="menu-starters">
+      <p class="menu-kicker">To start</p>
+      <h3>Starters</h3>
+      <div class="plate-list">
+        <div class="plate"><span class="name">Antipasto</span><span class="price">17.99</span><p class="desc">lettuce, ham, salami, cheese, pepperoni, tomato, onion, hot &amp; sweet peppers, black olive</p></div>
+        <div class="plate"><span class="name">House-Made Meatballs</span><span class="price">11.99</span><p class="desc">hand-rolled with sauce, cheese and a side of bread</p></div>
+        <div class="plate"><span class="name">Pepperoni Bread</span><span class="price">12.99</span><p class="desc">stuffed with pepperoni, cheese, side of sauce</p></div>
+        <div class="plate"><span class="name">Cheesy Bread</span><span class="price">9.99</span><p class="desc">cheese, fresh garlic, seasonings, side of sauce</p></div>
+        <div class="plate"><span class="name">Buffalo Chicken Cheese Fries</span><span class="price">12.99</span><p class="desc">crispy buffalo chicken, cheese, celery &amp; house-made bleu cheese</p></div>
+        <div class="plate"><span class="name">Fried Pickles</span><span class="price">9.99</span><p class="desc">crispy fried pickle chips with house-made ranch</p></div>
+        <div class="plate"><span class="name">Mozzarella Sticks</span><span class="price">8.99</span><p class="desc">side of sauce</p></div>
+        <div class="plate"><span class="name">Boneless Wings</span><span class="price">10.99</span><p class="desc">any sauce · celery, ranch, bleu cheese +1.00</p></div>
+        <div class="plate"><span class="name">Fries</span><span class="price">7.99</span><p class="desc">add cheese 2.50 · add bacon 2.50</p></div>
+        <div class="plate"><span class="name">Potato &amp; Cheese Pierogi (6)</span><span class="price">8.99</span><p class="desc">butter and onions</p></div>
+      </div>
+    </div>
+
+    <div class="menu-block scroll-in" id="menu-salads">
+      <p class="menu-kicker">Greens</p>
+      <h3>Salads</h3>
+      <p class="menu-block-desc">Dressings: House Italian, House-made Ranch, House-made Bleu Cheese, Thousand Island, Caesar.</p>
+      <div class="plate-list">
+        <div class="plate"><span class="name">Italian Chopped</span><span class="price">14.99</span><p class="desc">lettuce, salami, pepperoni, cheese, chickpeas, carrot</p></div>
+        <div class="plate"><span class="name">Antipasto</span><span class="price">17.99</span><p class="desc">lettuce, ham, salami, cheese, pepperoni, tomato, onion, hot &amp; sweet peppers, black olive</p></div>
+        <div class="plate"><span class="name">Caesar</span><span class="price">14.99</span><p class="desc">lettuce, fresh grated parmesan, house-made croutons</p></div>
+        <div class="plate"><span class="name">Chicken Bacon Ranch</span><span class="price">14.99</span><p class="desc">lettuce, chicken, bacon, tomato, cheese, egg</p></div>
+        <div class="plate"><span class="name">Greek</span><span class="price">14.99</span><p class="desc">lettuce, tomato, cucumber, black olive, onion, feta</p></div>
+        <div class="plate"><span class="name">Grilled Chicken</span><span class="price">14.99</span><p class="desc">lettuce, chicken, cheese, tomato, cucumber, onion</p></div>
+        <div class="plate"><span class="name">Summer (Seasonal)</span><span class="price">15.99</span><p class="desc">lettuce, pineapple, orange, strawberry, blueberry, walnut, chicken</p></div>
+        <div class="plate"><span class="name">Tossed</span><span class="price">7.99</span><p class="desc">lettuce, tomato, onion, cucumber, black olive, cheese</p></div>
+      </div>
     </div>
   </div>
 
-  <div class="menu-block scroll-in">
-    <h3 class="menu-block-title">Starters</h3>
-    <div class="cuts">
-      <div class="cut"><div class="cut-top"><span class="cut-name">Antipasto</span><span class="cut-price">17.99</span></div><p class="cut-desc">lettuce, ham, salami, cheese, pepperoni, tomato, onion, hot &amp; sweet peppers, black olive</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">House-Made Meatballs</span><span class="cut-price">11.99</span></div><p class="cut-desc">hand-rolled with sauce, cheese and a side of bread</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Pepperoni Bread</span><span class="cut-price">12.99</span></div><p class="cut-desc">stuffed with pepperoni, cheese, side of sauce</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Cheesy Bread</span><span class="cut-price">9.99</span></div><p class="cut-desc">cheese, fresh garlic, seasonings, side of sauce</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Buffalo Chicken Cheese Fries</span><span class="cut-price">12.99</span></div><p class="cut-desc">crispy buffalo chicken, cheese, side of celery &amp; house-made bleu cheese</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Fried Pickles</span><span class="cut-price">9.99</span></div><p class="cut-desc">crispy fried pickle chips with house-made ranch</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Mozzarella Sticks</span><span class="cut-price">8.99</span></div><p class="cut-desc">side of sauce</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Boneless Wings</span><span class="cut-price">10.99</span></div><p class="cut-desc">choose any sauce · celery, ranch, bleu cheese 1.00 ea.</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Fries</span><span class="cut-price">7.99</span></div><p class="cut-desc">add cheese 2.50 · add bacon 2.50</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Potato &amp; Cheese Pierogi (6)</span><span class="cut-price">8.99</span></div><p class="cut-desc">butter and onions</p></div>
+  <div class="menu-block scroll-in" id="menu-subs">
+    <p class="menu-kicker">Handhelds</p>
+    <h3>Subs &amp; platters</h3>
+    <div class="plate-list">
+      <div class="plate"><span class="name">Italian Sub</span><span class="price">12.99</span><p class="desc">ham, salami, provolone, lettuce, tomato, onion, hot &amp; sweet peppers, oil &amp; vinegar · add fries 2.00</p></div>
+      <div class="plate"><span class="name">Meatball &amp; Cheese Sub</span><span class="price">14.99</span><p class="desc">house-made meatballs, sauce, cheese · add fries 2.00</p></div>
+      <div class="plate"><span class="name">Cheesesteak Sub</span><span class="price">14.99</span><p class="desc">sliced ribeye, cheese · add fries 2.00</p></div>
+      <div class="plate"><span class="name">Kids Chicken &amp; Fries</span><span class="price">8.99</span><p class="desc">chicken strips (2), fries</p></div>
+      <div class="plate"><span class="name">Chicken Strips &amp; Fries</span><span class="price">12.99</span><p class="desc">chicken strips (4), fries</p></div>
+      <div class="plate"><span class="name">Soup of the Day</span><span class="price">Cup 5.99 · Bowl 7.99</span><p class="desc">ask your server about our daily special</p></div>
     </div>
-  </div>
+    <p class="menu-foot">Drinks — Coke, Diet Coke, Root Beer, Sprite, Raspberry Tea, Unsweetened Tea, Lemonade. Ask about specialty cocktails and the house beer list when you’re in.</p>
 
-  <div class="menu-block scroll-in">
-    <h3 class="menu-block-title">Salads</h3>
-    <p class="menu-block-desc">Dressings: House Italian, House-made Ranch, House-made Bleu Cheese, Thousand Island, Caesar.</p>
-    <div class="cuts">
-      <div class="cut"><div class="cut-top"><span class="cut-name">Italian Chopped</span><span class="cut-price">14.99</span></div><p class="cut-desc">lettuce, salami, pepperoni, cheese, chickpeas, carrot</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Antipasto</span><span class="cut-price">17.99</span></div><p class="cut-desc">lettuce, ham, salami, cheese, pepperoni, tomato, onion, hot &amp; sweet peppers, black olive</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Caesar</span><span class="cut-price">14.99</span></div><p class="cut-desc">lettuce, fresh grated parmesan, house-made croutons, tossed in dressing</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Chicken Bacon Ranch</span><span class="cut-price">14.99</span></div><p class="cut-desc">lettuce, chicken, bacon, tomato, cheese, egg</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Greek</span><span class="cut-price">14.99</span></div><p class="cut-desc">lettuce, tomato, cucumber, black olive, onion, feta</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Grilled Chicken</span><span class="cut-price">14.99</span></div><p class="cut-desc">lettuce, chicken, cheese, tomato, cucumber, onion</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Summer (Seasonal)</span><span class="cut-price">15.99</span></div><p class="cut-desc">lettuce, pineapple, orange, strawberry, blueberry, walnut, chicken</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Tossed</span><span class="cut-price">7.99</span></div><p class="cut-desc">lettuce, tomato, onion, cucumber, black olive, cheese</p></div>
+    <div class="dessert scroll-in" id="peanut-butter-pie">
+      <div>
+        <p class="menu-kicker">Save room</p>
+        <h3>Peanut Butter Pie</h3>
+        <p>The dessert guests won’t shut up about — rich, cold, and the reason tables linger. Ask for a slice when you call it in or sit down.</p>
+        <span class="ask">Ask when you order · by the slice</span>
+      </div>
+      <aside class="dessert-aside">
+        “Their peanut butter pie should be illegal… it’s THAT good.”
+        <cite>Brian C. · Google</cite>
+      </aside>
     </div>
-  </div>
 
-  <div class="menu-block scroll-in">
-    <h3 class="menu-block-title">Subs &amp; Platters</h3>
-    <div class="cuts">
-      <div class="cut"><div class="cut-top"><span class="cut-name">Italian Sub</span><span class="cut-price">12.99</span></div><p class="cut-desc">ham, salami, provolone, lettuce, tomato, onion, hot &amp; sweet peppers, oil &amp; vinegar · add fries 2.00</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Meatball &amp; Cheese Sub</span><span class="cut-price">14.99</span></div><p class="cut-desc">house-made meatballs, sauce, cheese · add fries 2.00</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Cheesesteak Sub</span><span class="cut-price">14.99</span></div><p class="cut-desc">sliced ribeye, cheese · add fries 2.00</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Kids Chicken &amp; Fries</span><span class="cut-price">8.99</span></div><p class="cut-desc">chicken strips (2), fries</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Chicken Strips &amp; Fries</span><span class="cut-price">12.99</span></div><p class="cut-desc">chicken strips (4), fries</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Soup of the Day</span><span class="cut-price">Cup 5.99 · Bowl 7.99</span></div><p class="cut-desc">ask your server about our daily special</p></div>
-    </div>
-    <p class="menu-foot">Drinks — Coke, Diet Coke, Root Beer, Sprite, Raspberry Tea, Unsweetened Tea, Lemonade. Ask about our beer &amp; cocktail list.</p>
+    <p class="locals-order">
+      <strong>Locals also order</strong>
+      <a href="#menu-wings">Wings</a><span class="sep">·</span>
+      <a href="#menu-stromboli">Stromboli</a><span class="sep">·</span>
+      <a href="#menu-salads">Antipasto</a><span class="sep">·</span>
+      <a href="#menu-starters">Pierogi</a><span class="sep">·</span>
+      <a href="#menu-trays">Double White</a><span class="sep">·</span>
+      <a href="#peanut-butter-pie">Peanut Butter Pie</a><span class="sep">·</span>
+      <a href="#chick-fil-j">Chick Fil “J”</a>
+    </p>
   </div>
 </main>
 
+<section class="wrap voice" id="voice">
+  <div class="section-head">
+    <div><p class="eyebrow">Enola talks with its mouth full</p><h2>Neighborhood says</h2></div>
+    <span class="note">Google 4.5 · 553 reviews · #3 of 26 Enola</span>
+  </div>
+  <div class="voice-grid scroll-in">
+    <figure class="voice-card">
+      <blockquote>“Staff treats you like family — amazing food, best prices in the area.”</blockquote>
+      <cite>Guest note · Google</cite>
+    </figure>
+    <figure class="voice-card">
+      <blockquote>“Chick Fil J was amazing — garlic sauce, crunchy dill pickles, chicken. We’ll be back.”</blockquote>
+      <cite>Angela H. · guest</cite>
+    </figure>
+    <figure class="voice-card">
+      <blockquote>“In-house beers are top notch. Favorite neighborhood restaurant — they make you feel like family.”</blockquote>
+      <cite>Danielle L. · Google</cite>
+    </figure>
+  </div>
+  <div class="voice-foot">
+    <p>Short guest notes — not a scraped review feed. Full write-ups live on Google, TripAdvisor, and Yelp.</p>
+    <div class="voice-links">
+      <a class="trust-chip" href="https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m6!3m5!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf" target="_blank" rel="noopener">Google · <em>4.5 · 553</em> →</a>
+      <a class="trust-chip" href="https://www.tripadvisor.com/Restaurant_Review-g52601-d449832-Reviews-Jigsy_s_Brewpub_Restaurant-Enola_Pennsylvania.html" target="_blank" rel="noopener">TripAdvisor · <em>4.5</em> →</a>
+      <a class="trust-chip" href="https://www.yelp.com/biz/jigsys-brewpub-and-restaurant-enola" target="_blank" rel="noopener">Yelp · <em>4.0</em> →</a>
+    </div>
+  </div>
+</section>
+
 <section class="story">
   <div class="story-inner">
+    <figure class="story-photo scroll-in">
+      <img src="images/band_lounge.jpg" alt="Downstairs lounge at Jigsy's — skill games and TVs for the game" width="1200" height="800" loading="lazy">
+    </figure>
     <div class="scroll-in">
       <p class="eyebrow">Since the neighborhood said so</p>
       <h2>Made over.<br>Same <span class="accent">table.</span></h2>
-    </div>
-    <div class="scroll-in">
-      <p>We just wrapped a full renovation and threw the dining room doors back open — new patio out back, live music on the weekends, same trays coming out of the same pans.</p>
-      <p>"We absolutely love serving our community, customers, friends &amp; family." That's not a slogan we bought. It's why the corners still go first.</p>
+      <p>We just wrapped a full renovation and threw the dining room doors back open — new patio out back, house beers on tap, and a downstairs lounge with TVs for the game, skill games, and private parties.</p>
+      <p>Corners still go first. Double-crust white still gets argued over. The patio’s open when the weather is.</p>
       <div class="story-tags">
         <span class="story-tag">Renovated dining room</span><span class="story-tag">Outdoor patio</span>
-        <span class="story-tag">Live music</span><span class="story-tag">Catering by Jigsy's</span>
+        <span class="story-tag">House beers</span><span class="story-tag">TV lounge</span>
+        <span class="story-tag">Skill games</span><span class="story-tag">Private parties</span>
+        <span class="story-tag">Catering by Jigsy's</span>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap faq" id="faq">
+  <div class="section-head">
+    <div><p class="eyebrow">Before you call</p><h2>FAQ</h2></div>
+    <span class="note">Phone-order &amp; dine-in</span>
+  </div>
+  <div class="faq-list scroll-in">
+    <div class="faq-item">
+      <h3>How do I order?</h3>
+      <p>Call <a href="tel:+17177327708">(717) 732-7708</a>. We’re phone-order and dine-in — no app, no online cart. Pick a tray (red or white, 3 / 6 / 12 cuts), add wings or a salad, and we’ll have it hot for pickup or the table.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Do you have a patio?</h3>
+      <p>Yes — outdoor seating when the weather’s good. Come sit down, or call it in and grab it to go.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What’s downstairs?</h3>
+      <p>A TV lounge for the game, skill games, and space for private parties. Ask when you call if you’re planning a group.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Do you cater?</h3>
+      <p>Yes — Catering by Jigsy’s. Call the shop and we’ll walk you through trays, wings, and party spreads.</p>
     </div>
   </div>
 </section>
@@ -656,6 +1206,17 @@
     <div><p class="eyebrow">Come hungry</p><h2>Visit</h2></div>
     <span class="note">Summer 2026 hours</span>
   </div>
+  <div class="amenity-strip" aria-label="What to expect">
+    <span>Patio</span>
+    <span>House beers</span>
+    <span>TV lounge</span>
+    <span>Skill games</span>
+    <span>Private parties</span>
+    <span>Catering</span>
+    <span>Takeout</span>
+    <span>Kids welcome</span>
+    <span>Wheelchair accessible</span>
+  </div>
   <div class="visit-inner">
     <div class="visit-col">
       <h3>Hours</h3>
@@ -664,8 +1225,14 @@
     <div class="visit-col">
       <h3>Find us</h3>
       <p class="addr-line big">Jigsy's Brewpub &amp; Restaurant</p>
-      <p class="addr-line">225 N Enola Road</p>
+      <p class="addr-line">225 N Enola Road · Rt 11/15</p>
       <p class="addr-line">Enola, PA 17025</p>
+      <div class="trust-row">
+        <a class="trust-chip" href="https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m6!3m5!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf" target="_blank" rel="noopener">Google · <em>4.5 · 553</em> →</a>
+        <a class="trust-chip" href="https://www.tripadvisor.com/Restaurant_Review-g52601-d449832-Reviews-Jigsy_s_Brewpub_Restaurant-Enola_Pennsylvania.html" target="_blank" rel="noopener">TripAdvisor · <em>4.5</em> →</a>
+        <a class="trust-chip" href="https://www.yelp.com/biz/jigsys-brewpub-and-restaurant-enola" target="_blank" rel="noopener">Yelp · <em>4.0</em> →</a>
+        <a class="trust-chip" href="https://maps.google.com/?q=225+N+Enola+Road+Enola+PA+17025" target="_blank" rel="noopener">Directions →</a>
+      </div>
       <div class="visit-links">
         <a class="visit-link" href="tel:+17177327708">Call · (717) 732-7708 →</a>
         <a class="visit-link" href="https://www.instagram.com/jigsys_brewpub_restaurant" target="_blank" rel="noopener">Instagram · @jigsys_brewpub_restaurant →</a>
@@ -683,13 +1250,13 @@
         <p>Old Forge–style pizza, award-winning wings, and cold local taps in Enola, PA.</p>
       </div>
       <div class="footer-cols">
-        <div class="footer-col"><h4>Explore</h4><a href="#order">How to order</a><a href="#menu">Menu</a><a href="#visit">Hours &amp; Location</a></div>
-        <div class="footer-col"><h4>Follow</h4><a href="https://www.instagram.com/jigsys_brewpub_restaurant" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/jigsyspizza/" target="_blank" rel="noopener">Facebook</a></div>
-        <div class="footer-col"><h4>Find us</h4><a href="tel:+17177327708">(717) 732-7708</a><a href="https://maps.google.com/?q=225+N+Enola+Road+Enola+PA+17025" target="_blank" rel="noopener">225 N Enola Road, Enola PA</a></div>
+        <div class="footer-col"><h4>Explore</h4><a href="#picks">What’s good</a><a href="#order">How to order</a><a href="#menu">Menu</a><a href="#faq">FAQ</a><a href="#visit">Hours &amp; Location</a></div>
+        <div class="footer-col"><h4>Follow</h4><a href="https://www.instagram.com/jigsys_brewpub_restaurant" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/jigsyspizza/" target="_blank" rel="noopener">Facebook</a><a href="https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m6!3m5!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf" target="_blank" rel="noopener">Google · 4.5</a><a href="https://www.yelp.com/biz/jigsys-brewpub-and-restaurant-enola" target="_blank" rel="noopener">Yelp</a><a href="https://www.tripadvisor.com/Restaurant_Review-g52601-d449832-Reviews-Jigsy_s_Brewpub_Restaurant-Enola_Pennsylvania.html" target="_blank" rel="noopener">TripAdvisor</a></div>
+        <div class="footer-col"><h4>Find us</h4><a href="tel:+17177327708">(717) 732-7708</a><a href="https://maps.google.com/?q=225+N+Enola+Road+Enola+PA+17025" target="_blank" rel="noopener">225 N Enola Rd · Rt 11/15, Enola PA</a></div>
       </div>
     </div>
   </div>
-  <p class="concept-note">Independent redesign concept — not the official Jigsy's site. Menu, prices, hours, and contact details are transcribed from Jigsy's published Nov 2025 menu; prices subject to change. Food photography not included in this concept.</p>
+  <p class="concept-note">Independent redesign concept — not the official Jigsy's site. Menu, prices, hours, and contact details are transcribed from Jigsy's published Nov 2025 menu; prices subject to change. Food and lounge photos pulled from public Google guest uploads for this concept demo — swap for owner originals before any client handoff.</p>
 </footer>
 
 <div class="orderbar" id="orderbar">
@@ -824,3 +1391,5 @@
 
   })();
 </script>
+</body>
+</html>
