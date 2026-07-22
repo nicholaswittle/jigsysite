@@ -281,7 +281,7 @@
     background: var(--sauce); color: #fff; border-color: var(--sauce);
   }
   .chip .plus { opacity: 0.7; margin-right: 5px; }
-  .chip[aria-pressed="true"] .plus { content: "✓"; }
+  .chip-foot { color: var(--muted); font-size: 0.82rem; margin: 12px 0 0; max-width: 44ch; }
 
   .builder-visual { display: flex; flex-direction: column; align-items: center; gap: 22px; }
   #buildTray { width: 100%; max-width: 340px; }
@@ -336,6 +336,24 @@
   .cut-name { font-family: var(--display); font-weight: 700; font-size: 1.02rem; }
   .cut-price { font-family: var(--display); font-weight: 800; font-size: 1rem; color: var(--sauce); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .cut-desc { margin: 6px 0 0; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+  .sizes { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .sizes span {
+    font-family: var(--display); font-size: 0.82rem; color: var(--muted);
+    letter-spacing: 0.02em; font-variant-numeric: tabular-nums;
+  }
+  .sizes b { color: var(--sauce); font-weight: 800; }
+  .wing-flavors { display: grid; grid-template-columns: 1fr auto; gap: 6px 30px; align-items: start; }
+  .wing-sizes { display: flex; flex-direction: column; gap: 8px; }
+  .wing-size-row { display: flex; justify-content: space-between; gap: 24px; font-family: var(--display); font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+  .wing-size-row b { color: var(--sauce); font-weight: 800; }
+  .wing-dry { font-family: var(--display); font-weight: 700; font-size: 0.95rem; line-height: 1.7; }
+  .flavor-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .flavor-list span {
+    font-family: var(--display); font-size: 0.78rem; letter-spacing: 0.02em;
+    background: var(--surface); border: 1px solid var(--line-strong); color: var(--ink);
+    padding: 6px 12px; border-radius: 999px;
+  }
+  .menu-foot { font-family: var(--display); font-size: 0.8rem; color: var(--muted); margin: 10px 0 0; }
   .cuts .cut:nth-child(2n) { border-right: none; }
   .cuts.three .cut:nth-child(3n) { border-right: none; }
   @media (max-width: 620px) { .cuts, .cuts.three { grid-template-columns: 1fr; } .cut { border-right: none !important; } }
@@ -440,7 +458,7 @@
     <div>
       <span class="badge reveal d1"><span class="dot"></span>Simply the Best Wings — Harrisburg Magazine 2023</span>
       <h1 class="reveal d1">Jigsy<span class="apos">'</span>s<br>Old Forge<br>Pizza</h1>
-      <p class="hero-sub reveal d2">Brewpub &amp; Restaurant · Enola, Pennsylvania</p>
+      <p class="hero-sub reveal d2">Home of Old Forge Style Pizza · Est. 1999 · Enola, PA</p>
       <p class="hero-status reveal d2" id="heroStatus"><span class="beat"></span><span id="heroStatusText">Checking today's hours…</span></p>
       <p class="hero-lede reveal d2">Real Old Forge–style trays, award-winning wings, and cold local taps — served up in a made-over dining room with a patio and live music.</p>
       <div class="cta-row reveal d3">
@@ -483,18 +501,18 @@
   <div class="oldforge-inner">
     <div class="of-cell scroll-in">
       <div class="of-num">Red or White</div>
-      <h3>Two ways only</h3>
-      <p>Red is our classic marinara. White is a double crust layered with our cheese blend — no sauce, all savor. Old Forge doesn't do "supreme."</p>
+      <h3>Red, or white</h3>
+      <p>Red is classic marinara and cheese. White skips the sauce — cheese between the crusts, ordered single crust or double. No "supreme."</p>
     </div>
     <div class="of-cell scroll-in">
       <div class="of-num">By the Tray</div>
       <h3>Not a pie — a tray</h3>
-      <p>We bake rectangular in a seasoned steel pan. Order a full tray to feed the table, or a half if it's just you and a friend.</p>
+      <p>We bake rectangular in a seasoned steel pan, then load it with any of fifteen toppings. It's how Old Forge has always done it.</p>
     </div>
     <div class="of-cell scroll-in">
-      <div class="of-num">Cut in Squares</div>
+      <div class="of-num">3 · 6 · 12</div>
       <h3>Counted in cuts</h3>
-      <p>A tray comes sliced into square "cuts." Twelve to a full tray. Grab a corner for the crispy edge — everyone fights for those.</p>
+      <p>A tray comes sliced into square "cuts" — grab 3, split a 6, or feed the table with a full 12. Corners go first; everyone fights for those.</p>
     </div>
   </div>
 </section>
@@ -509,37 +527,43 @@
       <div class="ctrl-group">
         <p class="ctrl-label">Base</p>
         <div class="seg" id="baseSeg" role="group" aria-label="Choose base">
-          <button type="button" data-base="red" aria-pressed="true">Red</button>
-          <button type="button" data-base="white" aria-pressed="false">White</button>
+          <button type="button" data-base="red" aria-pressed="true">Traditional Red</button>
+          <button type="button" data-base="single" aria-pressed="false">Single White</button>
+          <button type="button" data-base="double" aria-pressed="false">Double White</button>
         </div>
       </div>
 
       <div class="ctrl-group">
         <p class="ctrl-label">Size</p>
         <div class="seg" id="sizeSeg" role="group" aria-label="Choose size">
-          <button type="button" data-size="half" aria-pressed="false">Half · 6 cuts</button>
-          <button type="button" data-size="full" aria-pressed="true">Full · 12 cuts</button>
+          <button type="button" data-size="3" aria-pressed="false">3 cuts</button>
+          <button type="button" data-size="6" aria-pressed="false">6 cuts</button>
+          <button type="button" data-size="12" aria-pressed="true">12 cuts</button>
         </div>
       </div>
 
       <div class="ctrl-group">
-        <p class="ctrl-label">Toppings · +$2 each</p>
+        <p class="ctrl-label">Toppings</p>
         <div class="chip-grid" id="toppings">
           <button class="chip" type="button" data-top="pepperoni" aria-pressed="false"><span class="plus">+</span>Pepperoni</button>
-          <button class="chip" type="button" data-top="mushroom" aria-pressed="false"><span class="plus">+</span>Mushroom</button>
+          <button class="chip" type="button" data-top="sausage" aria-pressed="false"><span class="plus">+</span>Sausage</button>
+          <button class="chip" type="button" data-top="mushroom" aria-pressed="false"><span class="plus">+</span>Mushrooms</button>
           <button class="chip" type="button" data-top="onion" aria-pressed="false"><span class="plus">+</span>Onion</button>
-          <button class="chip" type="button" data-top="pepper" aria-pressed="false"><span class="plus">+</span>Roasted Pepper</button>
-          <button class="chip" type="button" data-top="cheese" aria-pressed="false"><span class="plus">+</span>Extra Cheese</button>
+          <button class="chip" type="button" data-top="greenpepper" aria-pressed="false"><span class="plus">+</span>Green Peppers</button>
+          <button class="chip" type="button" data-top="hotpepper" aria-pressed="false"><span class="plus">+</span>Hot Peppers</button>
+          <button class="chip" type="button" data-top="broccoli" aria-pressed="false"><span class="plus">+</span>Broccoli</button>
+          <button class="chip" type="button" data-top="bacon" aria-pressed="false"><span class="plus">+</span>Bacon</button>
         </div>
+        <p class="chip-foot">Plus ham, chicken, pineapple, tomato, spinach, sweet peppers &amp; garlic — build any tray at the counter.</p>
       </div>
     </div>
 
     <div class="builder-visual scroll-in">
       <div id="buildTray" aria-hidden="true"></div>
       <div class="build-summary" aria-live="polite">
-        <div class="build-name" id="buildName">Classic Red Tray</div>
-        <div class="build-meta" id="buildMeta">Full · 12 cuts</div>
-        <div class="build-price" id="buildPrice">$18</div>
+        <div class="build-name" id="buildName">Traditional Red</div>
+        <div class="build-meta" id="buildMeta">12 cuts</div>
+        <div class="build-price" id="buildPrice">$18.99</div>
         <a class="build-cta" href="tel:+17177327708">Call to order this →</a>
       </div>
     </div>
@@ -549,47 +573,123 @@
 <main class="wrap" id="menu">
   <div class="section-head">
     <div><p class="eyebrow">The board</p><h2>The Menu</h2></div>
-    <span class="note">Sample layout · prices illustrative</span>
+    <span class="note">Nov 2025 · prices subject to change</span>
   </div>
 
   <div class="menu-block scroll-in">
-    <h3 class="menu-block-title">Trays <span class="tag red">Red</span> <span class="tag">White</span></h3>
-    <p class="menu-block-desc">Baked to order in steel pans and cut into squares. Full tray is 12 cuts; half tray is 6. Add toppings by the tray.</p>
+    <h3 class="menu-block-title">Old Forge Pizza <span class="tag red">Red</span> <span class="tag">White</span></h3>
+    <p class="menu-block-desc">The house style, baked in a steel pan and cut into squares — 3, 6, or 12 cuts. Add any topping ($): pepperoni, sausage, ham, green / sweet / hot peppers, onion, tomato, mushrooms, broccoli, bacon, chicken, pineapple, spinach or garlic.</p>
+    <div class="cuts three">
+      <div class="cut"><div class="cut-top"><span class="cut-name">Traditional Red</span></div><p class="cut-desc">sauce, cheese</p><div class="sizes"><span>3 · <b>7.49</b></span><span>6 · <b>14.99</b></span><span>12 · <b>18.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Single White</span></div><p class="cut-desc">single crust, cheese</p><div class="sizes"><span>3 · <b>8.49</b></span><span>6 · <b>15.99</b></span><span>12 · <b>20.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Double White</span></div><p class="cut-desc">double crust, cheese</p><div class="sizes"><span>6 · <b>18.99</b></span><span>12 · <b>26.99</b></span></div></div>
+    </div>
+  </div>
+
+  <div class="menu-block scroll-in">
+    <h3 class="menu-block-title">Specialty Pizza</h3>
+    <p class="menu-block-desc">Single crust · 3 / 6 / 12 cuts.</p>
     <div class="cuts">
-      <div class="cut"><div class="cut-top"><span class="cut-name">Classic Red Tray</span><span class="cut-price">$18</span></div><p class="cut-desc">Marinara, our cheese blend, oregano. The one that started it all. Half tray $10.</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">White Tray</span><span class="cut-price">$20</span></div><p class="cut-desc">Double crust, three-cheese blend, cracked black pepper, olive oil. No sauce. Half tray $11.</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Pepperoni Red</span><span class="cut-price">$22</span></div><p class="cut-desc">Full red tray under a blanket of cup-and-char pepperoni. Corners go first.</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Garden White</span><span class="cut-price">$24</span></div><p class="cut-desc">White tray with spinach, roasted red pepper, and sweet onion between the crusts.</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Tomato &amp; Garlic</span></div><p class="cut-desc">cheese, tomato, fresh garlic</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>16.49</b></span><span>12 · <b>24.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Chick Fil "J"</span></div><p class="cut-desc">buttery garlic sauce, crispy chicken, sliced pickles, cheese</p><div class="sizes"><span>3 · <b>11.99</b></span><span>6 · <b>18.49</b></span><span>12 · <b>27.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Chicken Bacon Ranch</span></div><p class="cut-desc">cheese, house-made ranch, grilled chicken, crispy bacon</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Buffalo Chicken</span></div><p class="cut-desc">hot sauce, cheese, crispy chicken</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Meatlovers</span></div><p class="cut-desc">sauce, cheese, ham, pepperoni, sausage, bacon</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Spinach &amp; Tomato</span></div><p class="cut-desc">cheese, spinach, tomato</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>16.49</b></span><span>12 · <b>24.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Meatball</span></div><p class="cut-desc">sauce, cheese, house-made meatballs, fresh parmesan</p><div class="sizes"><span>3 · <b>11.99</b></span><span>6 · <b>18.99</b></span><span>12 · <b>28.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Chicken Bruschetta</span></div><p class="cut-desc">light sauce, cheese, chicken, tomato, spinach, red onion, garlic</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Hot Oil Pepperoni</span></div><p class="cut-desc">sauce, cheese, pepperoni, Calabrian pepper oil</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Rustico</span></div><p class="cut-desc">cheese, pepperoni, sausage, green pepper, mushroom, onion</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Hawaiian</span></div><p class="cut-desc">cheese, ham, pineapple</p><div class="sizes"><span>3 · <b>10.99</b></span><span>6 · <b>17.49</b></span><span>12 · <b>26.99</b></span></div></div>
+    </div>
+  </div>
+
+  <div class="menu-block scroll-in">
+    <h3 class="menu-block-title">Gourmet Pizza</h3>
+    <p class="menu-block-desc">Double crust · 6 / 12 cuts.</p>
+    <div class="cuts">
+      <div class="cut"><div class="cut-top"><span class="cut-name">Buffalo Chicken</span></div><p class="cut-desc">hot sauce, crispy chicken, cheese</p><div class="sizes"><span>6 · <b>20.49</b></span><span>12 · <b>30.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Rustico</span></div><p class="cut-desc">cheese, pepperoni, sausage, green pepper, mushroom, onion</p><div class="sizes"><span>6 · <b>20.49</b></span><span>12 · <b>30.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Tomato &amp; Garlic</span></div><p class="cut-desc">cheese, tomato, garlic</p><div class="sizes"><span>6 · <b>19.49</b></span><span>12 · <b>29.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Broccoli</span></div><p class="cut-desc">cheese, broccoli</p><div class="sizes"><span>6 · <b>19.49</b></span><span>12 · <b>29.99</b></span></div></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Pierogi</span></div><p class="cut-desc">cheese, pierogi, butter, onion</p><div class="sizes"><span>6 · <b>20.49</b></span><span>12 · <b>30.99</b></span></div></div>
     </div>
   </div>
 
   <div class="menu-block scroll-in">
     <h3 class="menu-block-title">Wings <span class="tag red">2023 Best</span></h3>
-    <p class="menu-block-desc">The ones Harrisburg Magazine voted best. Jumbo, double-fried, tossed to order. By the dozen or the half.</p>
-    <div class="cuts three">
-      <div class="cut"><div class="cut-top"><span class="cut-name">Buffalo</span><span class="cut-price">$14</span></div><p class="cut-desc">The award winner. Mild, medium, or "prove it."</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Garlic Parm</span><span class="cut-price">$14</span></div><p class="cut-desc">Butter, roasted garlic, a snow of parmesan.</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Honey Heat</span><span class="cut-price">$15</span></div><p class="cut-desc">Local honey meets habanero. Sweet, then serious.</p></div>
+    <p class="menu-block-desc">Voted Simply the Best by Harrisburg Magazine. Add celery, ranch or bleu cheese 1.00 ea.</p>
+    <div class="wing-flavors">
+      <div class="wing-dry">Hot · Mild · BBQ<br>Old Bay · Honey BBQ · Teriyaki</div>
+      <div class="wing-sizes">
+        <div class="wing-size-row"><span>5 Wings</span><b>7.99</b></div>
+        <div class="wing-size-row"><span>10 Wings</span><b>12.99</b></div>
+        <div class="wing-size-row"><span>20 Wings</span><b>25.99</b></div>
+        <div class="wing-size-row"><span>30 Wings</span><b>34.99</b></div>
+      </div>
+    </div>
+    <div class="flavor-list">
+      <span>Classic Buffalo</span><span>Garlic Parm</span><span>Spicy Bleu Cheese</span><span>Spicy Ranch</span>
+      <span>Chicken Bacon Ranch</span><span>Salt &amp; Vinegar</span><span>Buffalo Bay</span><span>Hot Garlic</span><span>Sweet Heat</span>
     </div>
   </div>
 
   <div class="menu-block scroll-in">
-    <h3 class="menu-block-title">Starters &amp; Sides</h3>
-    <div class="cuts three">
-      <div class="cut"><div class="cut-top"><span class="cut-name">Broccoli Bites</span><span class="cut-price">$8</span></div><p class="cut-desc">Cheddar-broccoli, breaded and fried, ranch to dunk.</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Pierogi Plate</span><span class="cut-price">$9</span></div><p class="cut-desc">Potato-and-cheese, seared in butter and onions. NEPA to the core.</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">House Salad</span><span class="cut-price">$8</span></div><p class="cut-desc">Greens, tomato, red onion, provolone, house vinaigrette.</p></div>
+    <h3 class="menu-block-title">Stromboli &amp; Flatbreads</h3>
+    <div class="cuts">
+      <div class="cut"><div class="cut-top"><span class="cut-name">Traditional Stromboli</span><span class="cut-price">18.99</span></div><p class="cut-desc">ham, pepperoni, sausage, onion, mushroom, green &amp; sweet peppers, hot peppers</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Cheesesteak Stromboli</span><span class="cut-price">19.99</span></div><p class="cut-desc">cheesesteak, onion, mushroom, green peppers</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Buffalo Chicken Stromboli</span><span class="cut-price">19.99</span></div><p class="cut-desc">crispy chicken, hot sauce, cheese</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Veggie Stromboli</span><span class="cut-price">18.99</span></div><p class="cut-desc">tomato, spinach, garlic, cheese</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Traditional Red Flatbread</span><span class="cut-price">10.99</span></div><p class="cut-desc">sauce, cheese</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">BBQ Chicken Flatbread</span><span class="cut-price">12.49</span></div><p class="cut-desc">bbq sauce, cheese, grilled chicken, red onion, ranch</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Chicken Bruschetta Flatbread</span><span class="cut-price">12.49</span></div><p class="cut-desc">light sauce, chicken, cheese, tomato, spinach, red onion, garlic</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Veggie Flatbread</span><span class="cut-price">11.49</span></div><p class="cut-desc">spinach, tomato, garlic, cheese</p></div>
     </div>
   </div>
 
   <div class="menu-block scroll-in">
-    <h3 class="menu-block-title">On Tap</h3>
-    <p class="menu-block-desc">A rotating handful of local and house pours. Ask your server what just kicked.</p>
-    <div class="cuts three">
-      <div class="cut"><div class="cut-top"><span class="cut-name">House Amber</span><span class="cut-price">$6</span></div><p class="cut-desc">Malt-forward, easy-drinking. Our everyday.</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Local IPA</span><span class="cut-price">$7</span></div><p class="cut-desc">Rotating from the valley's breweries.</p></div>
-      <div class="cut"><div class="cut-top"><span class="cut-name">Root Beer</span><span class="cut-price">$4</span></div><p class="cut-desc">House-made, bottomless. For the whole table.</p></div>
+    <h3 class="menu-block-title">Starters</h3>
+    <div class="cuts">
+      <div class="cut"><div class="cut-top"><span class="cut-name">Antipasto</span><span class="cut-price">17.99</span></div><p class="cut-desc">lettuce, ham, salami, cheese, pepperoni, tomato, onion, hot &amp; sweet peppers, black olive</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">House-Made Meatballs</span><span class="cut-price">11.99</span></div><p class="cut-desc">hand-rolled with sauce, cheese and a side of bread</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Pepperoni Bread</span><span class="cut-price">12.99</span></div><p class="cut-desc">stuffed with pepperoni, cheese, side of sauce</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Cheesy Bread</span><span class="cut-price">9.99</span></div><p class="cut-desc">cheese, fresh garlic, seasonings, side of sauce</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Buffalo Chicken Cheese Fries</span><span class="cut-price">12.99</span></div><p class="cut-desc">crispy buffalo chicken, cheese, side of celery &amp; house-made bleu cheese</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Fried Pickles</span><span class="cut-price">9.99</span></div><p class="cut-desc">crispy fried pickle chips with house-made ranch</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Mozzarella Sticks</span><span class="cut-price">8.99</span></div><p class="cut-desc">side of sauce</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Boneless Wings</span><span class="cut-price">10.99</span></div><p class="cut-desc">choose any sauce · celery, ranch, bleu cheese 1.00 ea.</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Fries</span><span class="cut-price">7.99</span></div><p class="cut-desc">add cheese 2.50 · add bacon 2.50</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Potato &amp; Cheese Pierogi (6)</span><span class="cut-price">8.99</span></div><p class="cut-desc">butter and onions</p></div>
     </div>
+  </div>
+
+  <div class="menu-block scroll-in">
+    <h3 class="menu-block-title">Salads</h3>
+    <p class="menu-block-desc">Dressings: House Italian, House-made Ranch, House-made Bleu Cheese, Thousand Island, Caesar.</p>
+    <div class="cuts">
+      <div class="cut"><div class="cut-top"><span class="cut-name">Italian Chopped</span><span class="cut-price">14.99</span></div><p class="cut-desc">lettuce, salami, pepperoni, cheese, chickpeas, carrot</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Antipasto</span><span class="cut-price">17.99</span></div><p class="cut-desc">lettuce, ham, salami, cheese, pepperoni, tomato, onion, hot &amp; sweet peppers, black olive</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Caesar</span><span class="cut-price">14.99</span></div><p class="cut-desc">lettuce, fresh grated parmesan, house-made croutons, tossed in dressing</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Chicken Bacon Ranch</span><span class="cut-price">14.99</span></div><p class="cut-desc">lettuce, chicken, bacon, tomato, cheese, egg</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Greek</span><span class="cut-price">14.99</span></div><p class="cut-desc">lettuce, tomato, cucumber, black olive, onion, feta</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Grilled Chicken</span><span class="cut-price">14.99</span></div><p class="cut-desc">lettuce, chicken, cheese, tomato, cucumber, onion</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Summer (Seasonal)</span><span class="cut-price">15.99</span></div><p class="cut-desc">lettuce, pineapple, orange, strawberry, blueberry, walnut, chicken</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Tossed</span><span class="cut-price">7.99</span></div><p class="cut-desc">lettuce, tomato, onion, cucumber, black olive, cheese</p></div>
+    </div>
+  </div>
+
+  <div class="menu-block scroll-in">
+    <h3 class="menu-block-title">Subs &amp; Platters</h3>
+    <div class="cuts">
+      <div class="cut"><div class="cut-top"><span class="cut-name">Italian Sub</span><span class="cut-price">12.99</span></div><p class="cut-desc">ham, salami, provolone, lettuce, tomato, onion, hot &amp; sweet peppers, oil &amp; vinegar · add fries 2.00</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Meatball &amp; Cheese Sub</span><span class="cut-price">14.99</span></div><p class="cut-desc">house-made meatballs, sauce, cheese · add fries 2.00</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Cheesesteak Sub</span><span class="cut-price">14.99</span></div><p class="cut-desc">sliced ribeye, cheese · add fries 2.00</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Kids Chicken &amp; Fries</span><span class="cut-price">8.99</span></div><p class="cut-desc">chicken strips (2), fries</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Chicken Strips &amp; Fries</span><span class="cut-price">12.99</span></div><p class="cut-desc">chicken strips (4), fries</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Soup of the Day</span><span class="cut-price">Cup 5.99 · Bowl 7.99</span></div><p class="cut-desc">ask your server about our daily special</p></div>
+    </div>
+    <p class="menu-foot">Drinks — Coke, Diet Coke, Root Beer, Sprite, Raspberry Tea, Unsweetened Tea, Lemonade. Ask about our beer &amp; cocktail list.</p>
   </div>
 </main>
 
@@ -628,7 +728,7 @@
       <div class="visit-links">
         <a class="visit-link" href="tel:+17177327708">Call · (717) 732-7708 →</a>
         <a class="visit-link" href="https://www.instagram.com/jigsys_brewpub_restaurant" target="_blank" rel="noopener">Instagram · @jigsys_brewpub_restaurant →</a>
-        <a class="visit-link" href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook · Jigsy's Brewpub &amp; Restaurant →</a>
+        <a class="visit-link" href="https://www.facebook.com/jigsyspizza/" target="_blank" rel="noopener">Facebook · Jigsy's Brewpub &amp; Restaurant →</a>
       </div>
     </div>
   </div>
@@ -643,12 +743,12 @@
       </div>
       <div class="footer-cols">
         <div class="footer-col"><h4>Explore</h4><a href="#build">Build a tray</a><a href="#menu">Menu</a><a href="#visit">Hours &amp; Location</a></div>
-        <div class="footer-col"><h4>Follow</h4><a href="https://www.instagram.com/jigsys_brewpub_restaurant" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook</a></div>
+        <div class="footer-col"><h4>Follow</h4><a href="https://www.instagram.com/jigsys_brewpub_restaurant" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/jigsyspizza/" target="_blank" rel="noopener">Facebook</a></div>
         <div class="footer-col"><h4>Find us</h4><a href="tel:+17177327708">(717) 732-7708</a><a href="https://maps.google.com/?q=225+N+Enola+Road+Enola+PA+17025" target="_blank" rel="noopener">225 N Enola Road, Enola PA</a></div>
       </div>
     </div>
   </div>
-  <p class="concept-note">Redesign concept &amp; practice template — not the official Jigsy's site. Real contact details and hours; menu items and prices are placeholder samples to be replaced.</p>
+  <p class="concept-note">Independent redesign concept — not the official Jigsy's site. Menu, prices, hours, and contact details are transcribed from Jigsy's published Nov 2025 menu; prices subject to change. Food photography not included in this concept.</p>
 </footer>
 
 <div class="orderbar" id="orderbar">
@@ -754,51 +854,80 @@
     });
     document.getElementById("hoursList").innerHTML = html;
 
-    /* ---- Tray builder ---- */
+    /* ---- Tray builder (real menu prices) ---- */
     (function () {
       var TOPPING_POS = {
-        pepperoni: [[66,62],[160,66],[252,60],[70,150],[250,148],[160,232],[66,316],[254,320]],
-        mushroom: [[110,110],[210,120],[120,250],[220,260],[160,320]],
-        onion: [[90,90],[230,100],[100,300],[240,300],[160,180]],
-        pepper: [[130,70],[200,200],[80,220],[250,230],[150,300]],
-        cheese: [] // overlay handled separately
+        pepperoni:   [[66,62],[160,66],[252,60],[70,150],[250,148],[160,232],[66,316],[254,320]],
+        sausage:     [[100,80],[190,90],[240,170],[90,200],[150,270],[220,300],[70,250],[260,240]],
+        mushroom:    [[110,110],[210,120],[120,250],[220,260],[160,320]],
+        onion:       [[90,90],[230,100],[100,300],[240,300],[160,180]],
+        greenpepper: [[130,70],[200,200],[80,220],[250,230],[150,300]],
+        hotpepper:   [[70,120],[240,120],[110,190],[210,270],[160,340]],
+        broccoli:    [[95,140],[235,160],[130,290],[225,320],[160,110]],
+        bacon:       [[120,60],[210,90],[80,180],[250,200],[140,250],[200,330]]
       };
-      var state = { base: "red", size: "full", tops: new Set() };
-      var PRICE = { red: 18, white: 20 };
+      var PRICE = {
+        red:    { 3: 7.49, 6: 14.99, 12: 18.99 },
+        single: { 3: 8.49, 6: 15.99, 12: 20.99 },
+        double: { 6: 18.99, 12: 26.99 }
+      };
+      var BASE_LABEL = { red: "Traditional Red", single: "Single White", double: "Double White" };
+      var TOP_LABEL = {
+        pepperoni: "Pepperoni", sausage: "Sausage", mushroom: "Mushroom", onion: "Onion",
+        greenpepper: "Green Pepper", hotpepper: "Hot Pepper", broccoli: "Broccoli", bacon: "Bacon"
+      };
+
+      var state = { base: "red", size: "12", tops: new Set() };
 
       var trayEl = document.getElementById("buildTray");
       var nameEl = document.getElementById("buildName");
       var metaEl = document.getElementById("buildMeta");
       var priceEl = document.getElementById("buildPrice");
+      var sizeSeg = document.getElementById("sizeSeg");
+
+      function isRed() { return state.base === "red"; }
 
       function draw() {
-        var red = state.base === "red";
+        var red = isRed();
         var field = red ? '<rect x="22" y="22" width="276" height="336" rx="8" fill="url(#bSauce)"/>'
                         : '<rect x="22" y="22" width="276" height="336" rx="8" fill="url(#bWhite)"/>';
-        var cheeseOverlay = state.tops.has("cheese")
-          ? '<rect x="22" y="22" width="276" height="336" rx="8" fill="#F0E0B0" opacity="0.28"/>'
-          : (red ? '' : '<rect x="22" y="22" width="276" height="336" rx="8" fill="#F0E0B0" opacity="0.14"/>');
+        // double white reads a touch richer/paler
+        var whiteBoost = state.base === "double"
+          ? '<rect x="22" y="22" width="276" height="336" rx="8" fill="#F5E9C6" opacity="0.35"/>'
+          : (state.base === "single" ? '<rect x="22" y="22" width="276" height="336" rx="8" fill="#F0E0B0" opacity="0.14"/>' : '');
         var tp = "";
-        // pepperoni
         if (state.tops.has("pepperoni")) TOPPING_POS.pepperoni.forEach(function (p) {
           tp += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="14" fill="#8C2A1E"/>' +
                 '<circle cx="' + (p[0]-3) + '" cy="' + (p[1]-3) + '" r="4" fill="#A9382A" opacity="0.7"/>';
         });
-        // mushroom
+        if (state.tops.has("sausage")) TOPPING_POS.sausage.forEach(function (p) {
+          tp += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="7" fill="#5E3E22"/>' +
+                '<circle cx="' + (p[0]+5) + '" cy="' + (p[1]+4) + '" r="5" fill="#6E4A2C"/>';
+        });
         if (state.tops.has("mushroom")) TOPPING_POS.mushroom.forEach(function (p) {
           tp += '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="12" ry="8" fill="#C9A46A"/>' +
                 '<ellipse cx="' + p[0] + '" cy="' + (p[1]-2) + '" rx="7" ry="4" fill="#8A6E44" opacity="0.55"/>';
         });
-        // onion (translucent rings)
         if (state.tops.has("onion")) TOPPING_POS.onion.forEach(function (p) {
-          tp += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="11" fill="none" stroke="#F4ECD8" stroke-width="2.5" opacity="0.75"/>' +
+          tp += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="11" fill="none" stroke="#F4ECD8" stroke-width="2.5" opacity="0.78"/>' +
                 '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="6" fill="none" stroke="#F4ECD8" stroke-width="2" opacity="0.6"/>';
         });
-        // roasted pepper (slivers)
-        if (state.tops.has("pepper")) TOPPING_POS.pepper.forEach(function (p, i) {
-          var col = i % 2 ? "#6E7D33" : "#C6432E";
+        if (state.tops.has("greenpepper")) TOPPING_POS.greenpepper.forEach(function (p, i) {
           var rot = (i * 47) % 180;
-          tp += '<rect x="' + (p[0]-13) + '" y="' + (p[1]-3) + '" width="26" height="6" rx="3" fill="' + col + '" transform="rotate(' + rot + ' ' + p[0] + ' ' + p[1] + ')"/>';
+          tp += '<rect x="' + (p[0]-13) + '" y="' + (p[1]-3) + '" width="26" height="6" rx="3" fill="#4E7A34" transform="rotate(' + rot + ' ' + p[0] + ' ' + p[1] + ')"/>';
+        });
+        if (state.tops.has("hotpepper")) TOPPING_POS.hotpepper.forEach(function (p, i) {
+          var rot = (i * 61 + 20) % 180;
+          tp += '<rect x="' + (p[0]-12) + '" y="' + (p[1]-2.5) + '" width="24" height="5" rx="2.5" fill="#B23A2B" transform="rotate(' + rot + ' ' + p[0] + ' ' + p[1] + ')"/>';
+        });
+        if (state.tops.has("broccoli")) TOPPING_POS.broccoli.forEach(function (p) {
+          tp += '<circle cx="' + (p[0]-5) + '" cy="' + p[1] + '" r="5" fill="#3E6B2E"/>' +
+                '<circle cx="' + (p[0]+4) + '" cy="' + (p[1]-3) + '" r="5" fill="#4A7A38"/>' +
+                '<circle cx="' + (p[0]+3) + '" cy="' + (p[1]+5) + '" r="4" fill="#356028"/>';
+        });
+        if (state.tops.has("bacon")) TOPPING_POS.bacon.forEach(function (p, i) {
+          var rot = (i * 53) % 180;
+          tp += '<path d="M' + (p[0]-13) + ' ' + p[1] + ' q6 -6 12 0 q6 6 12 0" fill="none" stroke="#9A4A38" stroke-width="5" stroke-linecap="round" transform="rotate(' + rot + ' ' + p[0] + ' ' + p[1] + ')"/>';
         });
 
         var svg =
@@ -809,8 +938,8 @@
             '<linearGradient id="bPan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3330"/><stop offset="1" stop-color="#211c19"/></linearGradient>' +
           '</defs>' +
           '<rect x="8" y="8" width="304" height="364" rx="14" fill="url(#bPan)"/>' +
-          field + cheeseOverlay +
-          '<rect x="22" y="22" width="276" height="336" rx="8" fill="none" stroke="#E7B85E" stroke-width="6" opacity="0.5"/>' +
+          field + whiteBoost +
+          '<rect x="22" y="22" width="276" height="336" rx="8" fill="none" stroke="#E7B85E" stroke-width="' + (state.base === "double" ? 9 : 6) + '" opacity="0.5"/>' +
           '<g stroke="' + (red ? "#2b1c14" : "#B79A5E") + '" stroke-width="3" opacity="0.45">' +
             '<line x1="114" y1="22" x2="114" y2="358"/><line x1="206" y1="22" x2="206" y2="358"/>' +
             '<line x1="22" y1="106" x2="298" y2="106"/><line x1="22" y1="190" x2="298" y2="190"/><line x1="22" y1="274" x2="298" y2="274"/>' +
@@ -818,44 +947,51 @@
         trayEl.innerHTML = svg;
       }
 
-      function priceFor() {
-        var base = PRICE[state.base] + state.tops.size * 2;
-        if (state.size === "half") base = Math.round((base * 0.58) / 1) ; // half is a bit over half
-        return base;
-      }
-
       function nameFor() {
-        if (state.tops.size === 0) return state.base === "red" ? "Classic Red Tray" : "White Tray";
-        var pretty = { pepperoni: "Pepperoni", mushroom: "Mushroom", onion: "Onion", pepper: "Roasted Pepper", cheese: "Extra Cheese" };
-        var list = Array.from(state.tops).map(function (t) { return pretty[t]; });
-        var base = state.base === "red" ? "Red" : "White";
-        if (list.length === 1) return list[0] + " " + base;
-        return base + " · " + list.length + " toppings";
+        if (state.tops.size === 0) return BASE_LABEL[state.base];
+        var list = Array.from(state.tops).map(function (t) { return TOP_LABEL[t]; });
+        if (list.length === 1) return list[0] + " " + (isRed() ? "Red" : "White");
+        return BASE_LABEL[state.base] + " · " + list.length + " toppings";
       }
 
       function update() {
+        // Double White has no 3-cut size — reflect that in the controls.
+        var noThree = state.base === "double";
+        var threeBtn = sizeSeg.querySelector('[data-size="3"]');
+        threeBtn.disabled = noThree;
+        threeBtn.style.opacity = noThree ? "0.4" : "";
+        threeBtn.style.cursor = noThree ? "not-allowed" : "";
+        if (noThree && state.size === "3") { setSize("6"); return; }
+
         draw();
         nameEl.textContent = nameFor();
-        metaEl.textContent = (state.size === "full" ? "Full · 12 cuts" : "Half · 6 cuts");
-        priceEl.textContent = "$" + priceFor();
+        metaEl.textContent = state.size + " cuts";
+        var base = PRICE[state.base][state.size];
+        priceEl.textContent = "$" + base.toFixed(2) + (state.tops.size ? " +" : "");
       }
 
-      // Base segment
+      function setBase(b) {
+        state.base = b;
+        document.getElementById("baseSeg").querySelectorAll("button").forEach(function (x) {
+          x.setAttribute("aria-pressed", String(x.dataset.base === b));
+        });
+        document.getElementById("baseSeg").classList.toggle("white", b !== "red");
+        update();
+      }
+      function setSize(s) {
+        state.size = s;
+        sizeSeg.querySelectorAll("button").forEach(function (x) {
+          x.setAttribute("aria-pressed", String(x.dataset.size === s));
+        });
+        update();
+      }
+
       document.getElementById("baseSeg").addEventListener("click", function (e) {
-        var b = e.target.closest("button"); if (!b) return;
-        state.base = b.dataset.base;
-        this.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-        this.classList.toggle("white", state.base === "white");
-        update();
+        var b = e.target.closest("button"); if (b) setBase(b.dataset.base);
       });
-      // Size segment
-      document.getElementById("sizeSeg").addEventListener("click", function (e) {
-        var b = e.target.closest("button"); if (!b) return;
-        state.size = b.dataset.size;
-        this.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-        update();
+      sizeSeg.addEventListener("click", function (e) {
+        var b = e.target.closest("button"); if (b && !b.disabled) setSize(b.dataset.size);
       });
-      // Toppings
       document.getElementById("toppings").addEventListener("click", function (e) {
         var b = e.target.closest("button"); if (!b) return;
         var t = b.dataset.top;
