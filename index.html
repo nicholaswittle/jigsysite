@@ -1,0 +1,947 @@
+<script>document.documentElement.classList.add("js-anim");</script>
+<style>
+  :root {
+    --ground: #F7F0E3;
+    --surface: #FDF8EE;
+    --surface-2: #F0E6D3;
+    --ink: #22150F;
+    --muted: #6E5B4E;
+    --sauce: #B23A2B;
+    --sauce-deep: #8C2A1E;
+    --crust: #B07E28;
+    --crust-bright: #CF9438;
+    --line: rgba(34, 21, 15, 0.13);
+    --line-strong: rgba(34, 21, 15, 0.24);
+    --char-band: #17110D;
+    --char-ink: #F4E8D6;
+    --char-muted: #B29E8C;
+    --char-line: rgba(244, 232, 214, 0.14);
+    --open: #3E7C4A;
+    --closed: #B23A2B;
+
+    --display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --body: Georgia, "Times New Roman", serif;
+
+    --maxw: 1120px;
+    --radius: 3px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #17110D;
+      --surface: #201811;
+      --surface-2: #2A2018;
+      --ink: #F4E8D6;
+      --muted: #B29E8C;
+      --sauce: #DA5240;
+      --sauce-deep: #B23A2B;
+      --crust: #DCA748;
+      --crust-bright: #E7B85E;
+      --line: rgba(244, 232, 214, 0.13);
+      --line-strong: rgba(244, 232, 214, 0.24);
+      --char-band: #100C09;
+      --char-ink: #F4E8D6;
+      --char-muted: #B29E8C;
+      --char-line: rgba(244, 232, 214, 0.12);
+      --open: #5FA86C;
+      --closed: #E56A57;
+    }
+  }
+
+  :root[data-theme="light"] {
+    --ground: #F7F0E3; --surface: #FDF8EE; --surface-2: #F0E6D3;
+    --ink: #22150F; --muted: #6E5B4E; --sauce: #B23A2B; --sauce-deep: #8C2A1E;
+    --crust: #B07E28; --crust-bright: #CF9438;
+    --line: rgba(34,21,15,0.13); --line-strong: rgba(34,21,15,0.24);
+    --char-band: #17110D; --char-ink: #F4E8D6; --char-muted: #B29E8C;
+    --char-line: rgba(244,232,214,0.14); --open: #3E7C4A; --closed: #B23A2B;
+  }
+  :root[data-theme="dark"] {
+    --ground: #17110D; --surface: #201811; --surface-2: #2A2018;
+    --ink: #F4E8D6; --muted: #B29E8C; --sauce: #DA5240; --sauce-deep: #B23A2B;
+    --crust: #DCA748; --crust-bright: #E7B85E;
+    --line: rgba(244,232,214,0.13); --line-strong: rgba(244,232,214,0.24);
+    --char-band: #100C09; --char-ink: #F4E8D6; --char-muted: #B29E8C;
+    --char-line: rgba(244,232,214,0.12); --open: #5FA86C; --closed: #E56A57;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  .eyebrow {
+    font-family: var(--display); font-weight: 700; font-size: 0.72rem;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--sauce); margin: 0;
+  }
+  h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+  a { color: inherit; }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-inner {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 12px 24px; max-width: var(--maxw); margin: 0 auto;
+  }
+  .brand-cluster { display: flex; align-items: center; gap: 14px; }
+  .wordmark {
+    font-family: var(--display); font-weight: 800; font-size: 1.15rem;
+    letter-spacing: -0.02em; text-transform: uppercase; text-decoration: none;
+    display: inline-flex; align-items: baseline; gap: 7px;
+  }
+  .wordmark .apos { color: var(--sauce); }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--display); font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 5px 11px; border-radius: 999px;
+    border: 1px solid var(--line-strong); color: var(--muted);
+  }
+  .status-pill .beat {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--muted);
+    position: relative;
+  }
+  .status-pill.is-open { color: var(--open); border-color: color-mix(in srgb, var(--open) 45%, transparent); }
+  .status-pill.is-open .beat { background: var(--open); }
+  .status-pill.is-open .beat::after {
+    content: ""; position: absolute; inset: -4px; border-radius: 50%;
+    border: 1px solid var(--open); animation: pulse 2.2s ease-out infinite;
+  }
+  .status-pill.is-closed { color: var(--closed); border-color: color-mix(in srgb, var(--closed) 40%, transparent); }
+  .status-pill.is-closed .beat { background: var(--closed); }
+  @keyframes pulse { 0% { transform: scale(0.7); opacity: 0.9; } 100% { transform: scale(2.1); opacity: 0; } }
+
+  .topbar-meta { display: flex; align-items: center; gap: 18px; font-family: var(--display); font-size: 0.8rem; }
+  .topbar-meta a { text-decoration: none; color: var(--muted); }
+  .topbar-meta a:hover { color: var(--ink); }
+  .topbar-meta .sep { width: 1px; height: 16px; background: var(--line-strong); }
+  .call-btn {
+    font-family: var(--display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.02em;
+    text-decoration: none; color: #fff !important; background: var(--sauce);
+    padding: 8px 15px; border-radius: var(--radius); white-space: nowrap;
+  }
+  .call-btn:hover { background: var(--sauce-deep); }
+  .theme-toggle {
+    font-family: var(--display); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); background: transparent; border: 1px solid var(--line-strong);
+    border-radius: 999px; padding: 6px 12px; cursor: pointer;
+  }
+  .theme-toggle:hover { color: var(--ink); border-color: var(--ink); }
+  @media (max-width: 900px) { .topbar-meta .nav-link, .topbar-meta .sep { display: none; } }
+  @media (max-width: 560px) { .status-pill { display: none; } }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: var(--char-band); color: var(--char-ink);
+    position: relative; overflow: hidden; border-bottom: 3px solid var(--sauce);
+  }
+  .hero-grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--char-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--char-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(120% 90% at 22% 12%, #000 28%, transparent 78%);
+    pointer-events: none;
+  }
+  .hero-steam { position: absolute; inset: 0; pointer-events: none; z-index: 1; opacity: 0.9; }
+  .hero-inner {
+    position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto;
+    padding: 62px 24px 54px;
+    display: grid; grid-template-columns: 1.12fr 0.88fr; gap: 40px; align-items: center;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--display); font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.11em; text-transform: uppercase; color: var(--crust-bright);
+    border: 1px solid color-mix(in srgb, var(--crust-bright) 45%, transparent);
+    border-radius: 999px; padding: 7px 14px; margin-bottom: 20px;
+  }
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--crust-bright); }
+  .hero h1 {
+    font-weight: 800; letter-spacing: -0.035em; line-height: 0.9;
+    font-size: clamp(3.4rem, 9vw, 6.6rem); text-transform: uppercase; margin: 0 0 8px;
+  }
+  .hero h1 .apos { color: var(--sauce); }
+  .hero-sub {
+    font-family: var(--display); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    font-size: clamp(0.8rem, 1.6vw, 0.98rem); color: var(--char-muted); margin: 0 0 12px;
+  }
+  .hero-status {
+    font-family: var(--display); font-size: 0.86rem; font-weight: 700; letter-spacing: 0.02em;
+    margin: 0 0 20px; display: inline-flex; align-items: center; gap: 9px;
+  }
+  .hero-status .beat { width: 8px; height: 8px; border-radius: 50%; background: var(--char-muted); }
+  .hero-status.is-open { color: #7EC08A; } .hero-status.is-open .beat { background: #7EC08A; }
+  .hero-status.is-closed { color: #E88A78; } .hero-status.is-closed .beat { background: #E88A78; }
+  .hero-lede {
+    font-size: 1.12rem; line-height: 1.55; color: color-mix(in srgb, var(--char-ink) 88%, transparent);
+    max-width: 33ch; margin: 0 0 28px;
+  }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    font-family: var(--display); font-weight: 700; font-size: 0.9rem; letter-spacing: 0.02em;
+    text-decoration: none; padding: 14px 22px; border-radius: var(--radius);
+    display: inline-flex; align-items: center; gap: 9px; cursor: pointer; border: none;
+    transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+  .btn-primary { background: var(--sauce); color: #fff; }
+  .btn-primary:hover { background: var(--sauce-deep); transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: var(--char-ink); border: 1px solid color-mix(in srgb, var(--char-ink) 32%, transparent); }
+  .btn-ghost:hover { border-color: var(--char-ink); transform: translateY(-1px); }
+
+  .tray-art { justify-self: center; width: 100%; max-width: 380px; }
+  .tray-art svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 24px 40px rgba(0,0,0,0.42)); }
+
+  @media (max-width: 860px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 26px; }
+    .tray-art { order: -1; max-width: 290px; }
+  }
+
+  /* ---------- Marquee ---------- */
+  .marquee {
+    background: var(--sauce-deep); color: #F4E8D6; overflow: hidden;
+    border-bottom: 1px solid rgba(0,0,0,0.2); white-space: nowrap;
+  }
+  .marquee-track {
+    display: inline-flex; gap: 0; padding: 11px 0;
+    animation: marquee 26s linear infinite; will-change: transform;
+  }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  .marquee-track span {
+    font-family: var(--display); font-size: 0.74rem; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase; padding: 0 26px;
+    display: inline-flex; align-items: center; gap: 26px;
+  }
+  .marquee-track .star { color: var(--crust-bright); }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ---------- Old Forge explainer ---------- */
+  .oldforge { border-bottom: 1px solid var(--line); }
+  .oldforge-inner { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); }
+  .of-cell { padding: 40px 28px; border-right: 1px solid var(--line); }
+  .of-cell:last-child { border-right: none; }
+  .of-num { font-family: var(--display); font-weight: 800; font-size: 0.9rem; color: var(--crust); letter-spacing: 0.05em; }
+  .of-cell h3 { font-weight: 800; letter-spacing: -0.01em; font-size: 1.5rem; margin: 10px 0 8px; }
+  .of-cell p { margin: 0; color: var(--muted); font-size: 0.98rem; }
+  @media (max-width: 760px) {
+    .oldforge-inner { grid-template-columns: 1fr; }
+    .of-cell { border-right: none; border-bottom: 1px solid var(--line); }
+    .of-cell:last-child { border-bottom: none; }
+  }
+
+  /* ---------- Builder ---------- */
+  .builder { background: var(--surface-2); border-bottom: 1px solid var(--line); }
+  .builder-inner {
+    max-width: var(--maxw); margin: 0 auto; padding: 64px 24px;
+    display: grid; grid-template-columns: 1fr 0.92fr; gap: 48px; align-items: center;
+  }
+  .builder-head h2 {
+    font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase;
+    font-size: clamp(2rem, 5vw, 3rem); line-height: 1; margin: 6px 0 10px;
+  }
+  .builder-head p { color: var(--muted); margin: 0 0 26px; max-width: 42ch; }
+  .ctrl-group { margin-bottom: 22px; }
+  .ctrl-label {
+    font-family: var(--display); font-size: 0.68rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 10px;
+  }
+  .seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 999px; overflow: hidden; }
+  .seg button {
+    font-family: var(--display); font-weight: 700; font-size: 0.86rem; letter-spacing: 0.03em;
+    padding: 9px 20px; background: transparent; color: var(--muted); border: none; cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .seg button[aria-pressed="true"] { background: var(--sauce); color: #fff; }
+  .seg.white button[aria-pressed="true"] { background: var(--crust); color: #241a10; }
+  .chip-grid { display: flex; flex-wrap: wrap; gap: 9px; }
+  .chip {
+    font-family: var(--display); font-weight: 700; font-size: 0.82rem; letter-spacing: 0.02em;
+    padding: 9px 15px; border-radius: 999px; cursor: pointer;
+    background: var(--surface); color: var(--ink); border: 1px solid var(--line-strong);
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  }
+  .chip:hover { border-color: var(--ink); }
+  .chip[aria-pressed="true"] {
+    background: var(--sauce); color: #fff; border-color: var(--sauce);
+  }
+  .chip .plus { opacity: 0.7; margin-right: 5px; }
+  .chip[aria-pressed="true"] .plus { content: "✓"; }
+
+  .builder-visual { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  #buildTray { width: 100%; max-width: 340px; }
+  #buildTray svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 18px 34px rgba(0,0,0,0.18)); }
+  .build-summary {
+    width: 100%; max-width: 340px; background: var(--char-band); color: var(--char-ink);
+    border-radius: var(--radius); padding: 20px 22px; text-align: center;
+  }
+  .build-name { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; font-size: 1.05rem; }
+  .build-meta { font-family: var(--display); font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--char-muted); margin-top: 4px; }
+  .build-price { font-family: var(--display); font-weight: 800; font-size: 2.4rem; color: var(--crust-bright); font-variant-numeric: tabular-nums; margin: 8px 0 2px; }
+  .build-cta {
+    display: inline-flex; margin-top: 12px; font-family: var(--display); font-weight: 700;
+    font-size: 0.82rem; letter-spacing: 0.03em; text-decoration: none; color: #fff;
+    background: var(--sauce); padding: 11px 20px; border-radius: var(--radius);
+  }
+  .build-cta:hover { background: var(--sauce-deep); }
+  @media (max-width: 820px) { .builder-inner { grid-template-columns: 1fr; gap: 32px; } .builder-visual { order: -1; } }
+
+  /* ---------- Menu ---------- */
+  .section-head {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
+    padding: 66px 0 8px; flex-wrap: wrap;
+  }
+  .section-head h2 {
+    font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase;
+    font-size: clamp(2rem, 5vw, 3rem); line-height: 1;
+  }
+  .section-head .note {
+    font-family: var(--display); font-size: 0.7rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted); padding-bottom: 6px;
+  }
+  .menu-block { margin-top: 30px; }
+  .menu-block-title {
+    display: flex; align-items: center; gap: 12px; font-family: var(--display);
+    font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; font-size: 1.15rem; margin: 0 0 2px;
+  }
+  .menu-block-title .tag {
+    font-size: 0.6rem; letter-spacing: 0.14em; color: #241a10; background: var(--crust);
+    padding: 3px 8px; border-radius: 999px;
+  }
+  .menu-block-title .tag.red { background: var(--sauce); color: #fff; }
+  .menu-block-desc { color: var(--muted); font-size: 0.95rem; margin: 0 0 14px; max-width: 60ch; }
+  .cuts {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden; background: var(--surface);
+  }
+  .cuts.three { grid-template-columns: repeat(3, 1fr); }
+  .cut { padding: 20px 22px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); transition: background 0.15s ease; position: relative; }
+  .cut:hover { background: var(--surface-2); }
+  .cut-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .cut-name { font-family: var(--display); font-weight: 700; font-size: 1.02rem; }
+  .cut-price { font-family: var(--display); font-weight: 800; font-size: 1rem; color: var(--sauce); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cut-desc { margin: 6px 0 0; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+  .cuts .cut:nth-child(2n) { border-right: none; }
+  .cuts.three .cut:nth-child(3n) { border-right: none; }
+  @media (max-width: 620px) { .cuts, .cuts.three { grid-template-columns: 1fr; } .cut { border-right: none !important; } }
+
+  /* ---------- Story ---------- */
+  .story { margin-top: 72px; background: var(--char-band); color: var(--char-ink); border-top: 3px solid var(--crust); border-bottom: 3px solid var(--crust); }
+  .story-inner { max-width: var(--maxw); margin: 0 auto; padding: 66px 24px; display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 44px; align-items: center; }
+  .story h2 { font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase; font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1; }
+  .story h2 .accent { color: var(--sauce); }
+  .story p { font-size: 1.12rem; line-height: 1.65; color: color-mix(in srgb, var(--char-ink) 90%, transparent); margin: 0 0 16px; }
+  .story .eyebrow { color: var(--crust-bright); margin-bottom: 16px; }
+  .story-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .story-tag { font-family: var(--display); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--char-muted); border: 1px solid var(--char-line); border-radius: 999px; padding: 8px 14px; }
+  @media (max-width: 820px) { .story-inner { grid-template-columns: 1fr; gap: 24px; } }
+
+  /* ---------- Visit ---------- */
+  .visit-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden; margin-top: 30px; background: var(--surface); }
+  .visit-col { padding: 34px 32px; }
+  .visit-col:first-child { border-right: 1px solid var(--line); }
+  .visit-col h3 { font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; font-size: 1.15rem; margin: 0 0 18px; }
+  .hours-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); font-family: var(--display); font-size: 0.92rem; }
+  .hours-row:last-child { border-bottom: none; }
+  .hours-row .day { font-weight: 700; }
+  .hours-row .time { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .hours-row.is-closed .time { color: var(--sauce); }
+  .hours-row.is-today { background: color-mix(in srgb, var(--crust) 16%, transparent); margin: 0 -32px; padding-left: 32px; padding-right: 32px; }
+  .hours-row.is-today .day::after { content: " · Today"; color: var(--crust); font-weight: 700; }
+  .addr-line { margin: 0 0 6px; }
+  .addr-line.big { font-family: var(--display); font-weight: 700; font-size: 1.1rem; }
+  .visit-links { display: flex; flex-direction: column; gap: 12px; margin-top: 22px; }
+  .visit-link { font-family: var(--display); font-weight: 700; font-size: 0.92rem; text-decoration: none; color: var(--sauce); display: inline-flex; align-items: center; gap: 8px; }
+  .visit-link:hover { color: var(--sauce-deep); }
+  @media (max-width: 700px) { .visit-inner { grid-template-columns: 1fr; } .visit-col:first-child { border-right: none; border-bottom: 1px solid var(--line); } }
+
+  /* ---------- Sticky order bar ---------- */
+  .orderbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    background: var(--char-band); color: var(--char-ink);
+    border-top: 2px solid var(--sauce);
+    transform: translateY(120%); transition: transform 0.3s ease;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
+  }
+  .orderbar.show { transform: translateY(0); }
+  .orderbar-inner { max-width: var(--maxw); margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .orderbar-text { font-family: var(--display); font-size: 0.86rem; letter-spacing: 0.01em; }
+  .orderbar-text strong { color: var(--crust-bright); }
+  .orderbar .call-btn { padding: 10px 18px; }
+  @media (max-width: 560px) { .orderbar-text .long { display: none; } }
+
+  /* ---------- Footer ---------- */
+  footer { margin-top: 72px; border-top: 1px solid var(--line); padding: 44px 0 90px; }
+  .footer-inner { display: flex; justify-content: space-between; align-items: flex-start; gap: 30px; flex-wrap: wrap; }
+  .footer-brand .wordmark { font-size: 1.4rem; }
+  .footer-brand p { color: var(--muted); font-size: 0.92rem; margin: 12px 0 0; max-width: 34ch; }
+  .footer-cols { display: flex; gap: 56px; flex-wrap: wrap; }
+  .footer-col h4 { font-family: var(--display); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  .footer-col a { display: block; font-family: var(--display); font-size: 0.92rem; text-decoration: none; color: var(--ink); margin-bottom: 8px; }
+  .footer-col a:hover { color: var(--sauce); }
+  .concept-note { max-width: var(--maxw); margin: 32px auto 0; padding: 14px 24px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.78rem; font-family: var(--display); letter-spacing: 0.02em; }
+
+  a:focus-visible, button:focus-visible, .btn:focus-visible, .chip:focus-visible {
+    outline: 2px solid var(--crust-bright); outline-offset: 3px; border-radius: 2px;
+  }
+
+  /* Reveals */
+  .js-anim .reveal { opacity: 0; transform: translateY(14px); }
+  .js-anim.revealed .reveal { opacity: 1; transform: none; transition: opacity 0.6s ease, transform 0.6s ease; }
+  .revealed .reveal.d1 { transition-delay: 0.06s; }
+  .revealed .reveal.d2 { transition-delay: 0.12s; }
+  .revealed .reveal.d3 { transition-delay: 0.18s; }
+  .revealed .reveal.d4 { transition-delay: 0.24s; }
+  .js-anim .scroll-in { opacity: 0; transform: translateY(24px); }
+  .js-anim .scroll-in.in { opacity: 1; transform: none; transition: opacity 0.55s ease, transform 0.55s ease; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, .marquee-track { transition: none !important; animation: none !important; }
+    .reveal, .scroll-in { opacity: 1 !important; transform: none !important; }
+  }
+</style>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand-cluster">
+      <a class="wordmark" href="#top">Jigsy<span class="apos">'</span>s</a>
+      <span class="status-pill" id="statusPill"><span class="beat"></span><span id="statusPillText">Hours</span></span>
+    </div>
+    <nav class="topbar-meta">
+      <a class="nav-link" href="#build">Build a tray</a>
+      <a class="nav-link" href="#menu">Menu</a>
+      <a class="nav-link" href="#visit">Visit</a>
+      <span class="sep"></span>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch color theme">Dark</button>
+      <a class="call-btn" href="tel:+17177327708">Call to order</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero" id="top">
+  <div class="hero-grid-bg"></div>
+  <canvas class="hero-steam" id="steam" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div>
+      <span class="badge reveal d1"><span class="dot"></span>Simply the Best Wings — Harrisburg Magazine 2023</span>
+      <h1 class="reveal d1">Jigsy<span class="apos">'</span>s<br>Old Forge<br>Pizza</h1>
+      <p class="hero-sub reveal d2">Brewpub &amp; Restaurant · Enola, Pennsylvania</p>
+      <p class="hero-status reveal d2" id="heroStatus"><span class="beat"></span><span id="heroStatusText">Checking today's hours…</span></p>
+      <p class="hero-lede reveal d2">Real Old Forge–style trays, award-winning wings, and cold local taps — served up in a made-over dining room with a patio and live music.</p>
+      <div class="cta-row reveal d3">
+        <a class="btn btn-primary" href="#build">Build your tray →</a>
+        <a class="btn btn-ghost" href="tel:+17177327708">(717) 732-7708</a>
+      </div>
+    </div>
+    <div class="tray-art reveal d4" aria-hidden="true">
+      <svg viewBox="0 0 320 380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="pan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3330"/><stop offset="1" stop-color="#211c19"/></linearGradient>
+          <linearGradient id="sauceHero" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6432E"/><stop offset="1" stop-color="#992C1D"/></linearGradient>
+        </defs>
+        <rect x="8" y="8" width="304" height="364" rx="14" fill="url(#pan)"/>
+        <rect x="22" y="22" width="276" height="336" rx="8" fill="url(#sauceHero)"/>
+        <rect x="22" y="22" width="276" height="336" rx="8" fill="none" stroke="#E7B85E" stroke-width="6" opacity="0.55"/>
+        <g stroke="#2b1c14" stroke-width="3" opacity="0.5">
+          <line x1="114" y1="22" x2="114" y2="358"/><line x1="206" y1="22" x2="206" y2="358"/>
+          <line x1="22" y1="106" x2="298" y2="106"/><line x1="22" y1="190" x2="298" y2="190"/><line x1="22" y1="274" x2="298" y2="274"/>
+        </g>
+        <g>
+          <circle cx="66" cy="62" r="15" fill="#8C2A1E"/><circle cx="160" cy="66" r="15" fill="#8C2A1E"/><circle cx="252" cy="60" r="14" fill="#8C2A1E"/>
+          <circle cx="70" cy="150" r="14" fill="#8C2A1E"/><circle cx="250" cy="148" r="15" fill="#8C2A1E"/><circle cx="160" cy="232" r="15" fill="#8C2A1E"/>
+          <circle cx="66" cy="316" r="14" fill="#8C2A1E"/><circle cx="254" cy="320" r="15" fill="#8C2A1E"/>
+          <circle cx="158" cy="150" r="9" fill="#E7B85E" opacity="0.7"/><circle cx="112" cy="300" r="8" fill="#E7B85E" opacity="0.6"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="marquee">
+    <span><span class="star">★</span> Simply the Best Wings 2023 <span class="star">★</span> Red or White <span class="star">★</span> By the Tray <span class="star">★</span> Cut in Squares <span class="star">★</span> Cold Local Taps <span class="star">★</span> Patio &amp; Live Music </span>
+    <span><span class="star">★</span> Simply the Best Wings 2023 <span class="star">★</span> Red or White <span class="star">★</span> By the Tray <span class="star">★</span> Cut in Squares <span class="star">★</span> Cold Local Taps <span class="star">★</span> Patio &amp; Live Music </span>
+  </div>
+</div>
+
+<section class="oldforge">
+  <div class="oldforge-inner">
+    <div class="of-cell scroll-in">
+      <div class="of-num">Red or White</div>
+      <h3>Two ways only</h3>
+      <p>Red is our classic marinara. White is a double crust layered with our cheese blend — no sauce, all savor. Old Forge doesn't do "supreme."</p>
+    </div>
+    <div class="of-cell scroll-in">
+      <div class="of-num">By the Tray</div>
+      <h3>Not a pie — a tray</h3>
+      <p>We bake rectangular in a seasoned steel pan. Order a full tray to feed the table, or a half if it's just you and a friend.</p>
+    </div>
+    <div class="of-cell scroll-in">
+      <div class="of-num">Cut in Squares</div>
+      <h3>Counted in cuts</h3>
+      <p>A tray comes sliced into square "cuts." Twelve to a full tray. Grab a corner for the crispy edge — everyone fights for those.</p>
+    </div>
+  </div>
+</section>
+
+<section class="builder" id="build">
+  <div class="builder-inner">
+    <div class="builder-head scroll-in">
+      <p class="eyebrow">Make it yours</p>
+      <h2>Build Your Tray</h2>
+      <p>The way you'd order at the counter — pick red or white, size it, pile on the toppings. Watch the tray and the price come together.</p>
+
+      <div class="ctrl-group">
+        <p class="ctrl-label">Base</p>
+        <div class="seg" id="baseSeg" role="group" aria-label="Choose base">
+          <button type="button" data-base="red" aria-pressed="true">Red</button>
+          <button type="button" data-base="white" aria-pressed="false">White</button>
+        </div>
+      </div>
+
+      <div class="ctrl-group">
+        <p class="ctrl-label">Size</p>
+        <div class="seg" id="sizeSeg" role="group" aria-label="Choose size">
+          <button type="button" data-size="half" aria-pressed="false">Half · 6 cuts</button>
+          <button type="button" data-size="full" aria-pressed="true">Full · 12 cuts</button>
+        </div>
+      </div>
+
+      <div class="ctrl-group">
+        <p class="ctrl-label">Toppings · +$2 each</p>
+        <div class="chip-grid" id="toppings">
+          <button class="chip" type="button" data-top="pepperoni" aria-pressed="false"><span class="plus">+</span>Pepperoni</button>
+          <button class="chip" type="button" data-top="mushroom" aria-pressed="false"><span class="plus">+</span>Mushroom</button>
+          <button class="chip" type="button" data-top="onion" aria-pressed="false"><span class="plus">+</span>Onion</button>
+          <button class="chip" type="button" data-top="pepper" aria-pressed="false"><span class="plus">+</span>Roasted Pepper</button>
+          <button class="chip" type="button" data-top="cheese" aria-pressed="false"><span class="plus">+</span>Extra Cheese</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="builder-visual scroll-in">
+      <div id="buildTray" aria-hidden="true"></div>
+      <div class="build-summary" aria-live="polite">
+        <div class="build-name" id="buildName">Classic Red Tray</div>
+        <div class="build-meta" id="buildMeta">Full · 12 cuts</div>
+        <div class="build-price" id="buildPrice">$18</div>
+        <a class="build-cta" href="tel:+17177327708">Call to order this →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="wrap" id="menu">
+  <div class="section-head">
+    <div><p class="eyebrow">The board</p><h2>The Menu</h2></div>
+    <span class="note">Sample layout · prices illustrative</span>
+  </div>
+
+  <div class="menu-block scroll-in">
+    <h3 class="menu-block-title">Trays <span class="tag red">Red</span> <span class="tag">White</span></h3>
+    <p class="menu-block-desc">Baked to order in steel pans and cut into squares. Full tray is 12 cuts; half tray is 6. Add toppings by the tray.</p>
+    <div class="cuts">
+      <div class="cut"><div class="cut-top"><span class="cut-name">Classic Red Tray</span><span class="cut-price">$18</span></div><p class="cut-desc">Marinara, our cheese blend, oregano. The one that started it all. Half tray $10.</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">White Tray</span><span class="cut-price">$20</span></div><p class="cut-desc">Double crust, three-cheese blend, cracked black pepper, olive oil. No sauce. Half tray $11.</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Pepperoni Red</span><span class="cut-price">$22</span></div><p class="cut-desc">Full red tray under a blanket of cup-and-char pepperoni. Corners go first.</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Garden White</span><span class="cut-price">$24</span></div><p class="cut-desc">White tray with spinach, roasted red pepper, and sweet onion between the crusts.</p></div>
+    </div>
+  </div>
+
+  <div class="menu-block scroll-in">
+    <h3 class="menu-block-title">Wings <span class="tag red">2023 Best</span></h3>
+    <p class="menu-block-desc">The ones Harrisburg Magazine voted best. Jumbo, double-fried, tossed to order. By the dozen or the half.</p>
+    <div class="cuts three">
+      <div class="cut"><div class="cut-top"><span class="cut-name">Buffalo</span><span class="cut-price">$14</span></div><p class="cut-desc">The award winner. Mild, medium, or "prove it."</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Garlic Parm</span><span class="cut-price">$14</span></div><p class="cut-desc">Butter, roasted garlic, a snow of parmesan.</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Honey Heat</span><span class="cut-price">$15</span></div><p class="cut-desc">Local honey meets habanero. Sweet, then serious.</p></div>
+    </div>
+  </div>
+
+  <div class="menu-block scroll-in">
+    <h3 class="menu-block-title">Starters &amp; Sides</h3>
+    <div class="cuts three">
+      <div class="cut"><div class="cut-top"><span class="cut-name">Broccoli Bites</span><span class="cut-price">$8</span></div><p class="cut-desc">Cheddar-broccoli, breaded and fried, ranch to dunk.</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Pierogi Plate</span><span class="cut-price">$9</span></div><p class="cut-desc">Potato-and-cheese, seared in butter and onions. NEPA to the core.</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">House Salad</span><span class="cut-price">$8</span></div><p class="cut-desc">Greens, tomato, red onion, provolone, house vinaigrette.</p></div>
+    </div>
+  </div>
+
+  <div class="menu-block scroll-in">
+    <h3 class="menu-block-title">On Tap</h3>
+    <p class="menu-block-desc">A rotating handful of local and house pours. Ask your server what just kicked.</p>
+    <div class="cuts three">
+      <div class="cut"><div class="cut-top"><span class="cut-name">House Amber</span><span class="cut-price">$6</span></div><p class="cut-desc">Malt-forward, easy-drinking. Our everyday.</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Local IPA</span><span class="cut-price">$7</span></div><p class="cut-desc">Rotating from the valley's breweries.</p></div>
+      <div class="cut"><div class="cut-top"><span class="cut-name">Root Beer</span><span class="cut-price">$4</span></div><p class="cut-desc">House-made, bottomless. For the whole table.</p></div>
+    </div>
+  </div>
+</main>
+
+<section class="story">
+  <div class="story-inner">
+    <div class="scroll-in">
+      <p class="eyebrow">Since the neighborhood said so</p>
+      <h2>Made over.<br>Same <span class="accent">table.</span></h2>
+    </div>
+    <div class="scroll-in">
+      <p>We just wrapped a full renovation and threw the dining room doors back open — new patio out back, live music on the weekends, same trays coming out of the same pans.</p>
+      <p>"We absolutely love serving our community, customers, friends &amp; family." That's not a slogan we bought. It's why the corners still go first.</p>
+      <div class="story-tags">
+        <span class="story-tag">Renovated dining room</span><span class="story-tag">Outdoor patio</span>
+        <span class="story-tag">Live music</span><span class="story-tag">Catering by Jigsy's</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="visit">
+  <div class="section-head">
+    <div><p class="eyebrow">Come hungry</p><h2>Visit</h2></div>
+    <span class="note">Summer 2026 hours</span>
+  </div>
+  <div class="visit-inner">
+    <div class="visit-col">
+      <h3>Hours</h3>
+      <div id="hoursList"></div>
+    </div>
+    <div class="visit-col">
+      <h3>Find us</h3>
+      <p class="addr-line big">Jigsy's Brewpub &amp; Restaurant</p>
+      <p class="addr-line">225 N Enola Road</p>
+      <p class="addr-line">Enola, PA 17025</p>
+      <div class="visit-links">
+        <a class="visit-link" href="tel:+17177327708">Call · (717) 732-7708 →</a>
+        <a class="visit-link" href="https://www.instagram.com/jigsys_brewpub_restaurant" target="_blank" rel="noopener">Instagram · @jigsys_brewpub_restaurant →</a>
+        <a class="visit-link" href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook · Jigsy's Brewpub &amp; Restaurant →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="wordmark" href="#top">Jigsy<span class="apos">'</span>s</a>
+        <p>Old Forge–style pizza, award-winning wings, and cold local taps in Enola, PA.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col"><h4>Explore</h4><a href="#build">Build a tray</a><a href="#menu">Menu</a><a href="#visit">Hours &amp; Location</a></div>
+        <div class="footer-col"><h4>Follow</h4><a href="https://www.instagram.com/jigsys_brewpub_restaurant" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook</a></div>
+        <div class="footer-col"><h4>Find us</h4><a href="tel:+17177327708">(717) 732-7708</a><a href="https://maps.google.com/?q=225+N+Enola+Road+Enola+PA+17025" target="_blank" rel="noopener">225 N Enola Road, Enola PA</a></div>
+      </div>
+    </div>
+  </div>
+  <p class="concept-note">Redesign concept &amp; practice template — not the official Jigsy's site. Real contact details and hours; menu items and prices are placeholder samples to be replaced.</p>
+</footer>
+
+<div class="orderbar" id="orderbar">
+  <div class="orderbar-inner">
+    <div class="orderbar-text"><strong id="orderbarStatus">Open now</strong><span class="long"> — trays, wings &amp; cold taps in Enola, PA</span></div>
+    <a class="call-btn" href="tel:+17177327708">Call to order</a>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ---- Reveal on load ---- */
+    requestAnimationFrame(function () { document.body.classList.add("revealed"); });
+
+    /* ---- Theme toggle ---- */
+    (function () {
+      var btn = document.getElementById("themeToggle");
+      function current() {
+        var t = root.getAttribute("data-theme");
+        if (t) return t;
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      function sync() { btn.textContent = current() === "dark" ? "Light" : "Dark"; }
+      btn.addEventListener("click", function () {
+        root.setAttribute("data-theme", current() === "dark" ? "light" : "dark");
+        sync();
+      });
+      sync();
+    })();
+
+    /* ---- Hours + live open/closed ---- */
+    // 0=Sun … 6=Sat. Minutes from midnight. null = closed.
+    var SCHED = {
+      0: null,
+      1: null,
+      2: null,
+      3: [16 * 60, 20 * 60],
+      4: [11 * 60, 20 * 60],
+      5: [11 * 60, 21 * 60],
+      6: [11 * 60, 22 * 60]
+    };
+    var DAYNAME = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var DAYSHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    function fmt(mins) {
+      var h = Math.floor(mins / 60), m = mins % 60;
+      var ap = h >= 12 ? "PM" : "AM";
+      var hh = h % 12; if (hh === 0) hh = 12;
+      return hh + (m ? ":" + String(m).padStart(2, "0") : "") + " " + ap;
+    }
+
+    function computeStatus() {
+      var now = new Date();
+      var day = now.getDay();
+      var mins = now.getHours() * 60 + now.getMinutes();
+      var today = SCHED[day];
+      if (today && mins >= today[0] && mins < today[1]) {
+        var closingSoon = today[1] - mins <= 60;
+        return { open: true, text: "Open now · til " + fmt(today[1]), soon: closingSoon };
+      }
+      // find next opening within 7 days
+      for (var i = 0; i < 8; i++) {
+        var d = (day + i) % 7;
+        var sch = SCHED[d];
+        if (!sch) continue;
+        if (i === 0 && mins >= sch[1]) continue; // already closed today
+        if (i === 0 && mins < sch[0]) return { open: false, text: "Opens today at " + fmt(sch[0]) };
+        var label = i === 1 ? "tomorrow" : DAYNAME[d];
+        return { open: false, text: "Closed · opens " + label + " " + fmt(sch[0]) };
+      }
+      return { open: false, text: "Closed" };
+    }
+
+    var st = computeStatus();
+
+    var pill = document.getElementById("statusPill");
+    pill.classList.add(st.open ? "is-open" : "is-closed");
+    document.getElementById("statusPillText").textContent = st.open ? "Open now" : "Closed";
+
+    var heroStatus = document.getElementById("heroStatus");
+    heroStatus.classList.add(st.open ? "is-open" : "is-closed");
+    document.getElementById("heroStatusText").textContent = st.text;
+
+    document.getElementById("orderbarStatus").textContent = st.open ? "Open now" : "Closed";
+
+    // Build hours list, marking today
+    var todayIdx = new Date().getDay();
+    var order = [0, 3, 4, 5, 6]; // Sun-Tue grouped as closed, then Wed..Sat
+    var html = "";
+    // closed block
+    var closedToday = (todayIdx === 0 || todayIdx === 1 || todayIdx === 2);
+    html += '<div class="hours-row is-closed' + (closedToday ? ' is-today' : '') + '">' +
+            '<span class="day">Sun – Tue</span><span class="time">Closed</span></div>';
+    [3, 4, 5, 6].forEach(function (d) {
+      var sch = SCHED[d];
+      var t = fmt(sch[0]) + " – " + fmt(sch[1]);
+      var isToday = d === todayIdx;
+      html += '<div class="hours-row' + (isToday ? ' is-today' : '') + '">' +
+              '<span class="day">' + DAYNAME[d] + '</span><span class="time">' + t + '</span></div>';
+    });
+    document.getElementById("hoursList").innerHTML = html;
+
+    /* ---- Tray builder ---- */
+    (function () {
+      var TOPPING_POS = {
+        pepperoni: [[66,62],[160,66],[252,60],[70,150],[250,148],[160,232],[66,316],[254,320]],
+        mushroom: [[110,110],[210,120],[120,250],[220,260],[160,320]],
+        onion: [[90,90],[230,100],[100,300],[240,300],[160,180]],
+        pepper: [[130,70],[200,200],[80,220],[250,230],[150,300]],
+        cheese: [] // overlay handled separately
+      };
+      var state = { base: "red", size: "full", tops: new Set() };
+      var PRICE = { red: 18, white: 20 };
+
+      var trayEl = document.getElementById("buildTray");
+      var nameEl = document.getElementById("buildName");
+      var metaEl = document.getElementById("buildMeta");
+      var priceEl = document.getElementById("buildPrice");
+
+      function draw() {
+        var red = state.base === "red";
+        var field = red ? '<rect x="22" y="22" width="276" height="336" rx="8" fill="url(#bSauce)"/>'
+                        : '<rect x="22" y="22" width="276" height="336" rx="8" fill="url(#bWhite)"/>';
+        var cheeseOverlay = state.tops.has("cheese")
+          ? '<rect x="22" y="22" width="276" height="336" rx="8" fill="#F0E0B0" opacity="0.28"/>'
+          : (red ? '' : '<rect x="22" y="22" width="276" height="336" rx="8" fill="#F0E0B0" opacity="0.14"/>');
+        var tp = "";
+        // pepperoni
+        if (state.tops.has("pepperoni")) TOPPING_POS.pepperoni.forEach(function (p) {
+          tp += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="14" fill="#8C2A1E"/>' +
+                '<circle cx="' + (p[0]-3) + '" cy="' + (p[1]-3) + '" r="4" fill="#A9382A" opacity="0.7"/>';
+        });
+        // mushroom
+        if (state.tops.has("mushroom")) TOPPING_POS.mushroom.forEach(function (p) {
+          tp += '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="12" ry="8" fill="#C9A46A"/>' +
+                '<ellipse cx="' + p[0] + '" cy="' + (p[1]-2) + '" rx="7" ry="4" fill="#8A6E44" opacity="0.55"/>';
+        });
+        // onion (translucent rings)
+        if (state.tops.has("onion")) TOPPING_POS.onion.forEach(function (p) {
+          tp += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="11" fill="none" stroke="#F4ECD8" stroke-width="2.5" opacity="0.75"/>' +
+                '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="6" fill="none" stroke="#F4ECD8" stroke-width="2" opacity="0.6"/>';
+        });
+        // roasted pepper (slivers)
+        if (state.tops.has("pepper")) TOPPING_POS.pepper.forEach(function (p, i) {
+          var col = i % 2 ? "#6E7D33" : "#C6432E";
+          var rot = (i * 47) % 180;
+          tp += '<rect x="' + (p[0]-13) + '" y="' + (p[1]-3) + '" width="26" height="6" rx="3" fill="' + col + '" transform="rotate(' + rot + ' ' + p[0] + ' ' + p[1] + ')"/>';
+        });
+
+        var svg =
+          '<svg viewBox="0 0 320 380" xmlns="http://www.w3.org/2000/svg">' +
+          '<defs>' +
+            '<linearGradient id="bSauce" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6432E"/><stop offset="1" stop-color="#992C1D"/></linearGradient>' +
+            '<linearGradient id="bWhite" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EFE2C0"/><stop offset="1" stop-color="#DCC896"/></linearGradient>' +
+            '<linearGradient id="bPan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3330"/><stop offset="1" stop-color="#211c19"/></linearGradient>' +
+          '</defs>' +
+          '<rect x="8" y="8" width="304" height="364" rx="14" fill="url(#bPan)"/>' +
+          field + cheeseOverlay +
+          '<rect x="22" y="22" width="276" height="336" rx="8" fill="none" stroke="#E7B85E" stroke-width="6" opacity="0.5"/>' +
+          '<g stroke="' + (red ? "#2b1c14" : "#B79A5E") + '" stroke-width="3" opacity="0.45">' +
+            '<line x1="114" y1="22" x2="114" y2="358"/><line x1="206" y1="22" x2="206" y2="358"/>' +
+            '<line x1="22" y1="106" x2="298" y2="106"/><line x1="22" y1="190" x2="298" y2="190"/><line x1="22" y1="274" x2="298" y2="274"/>' +
+          '</g>' + tp + '</svg>';
+        trayEl.innerHTML = svg;
+      }
+
+      function priceFor() {
+        var base = PRICE[state.base] + state.tops.size * 2;
+        if (state.size === "half") base = Math.round((base * 0.58) / 1) ; // half is a bit over half
+        return base;
+      }
+
+      function nameFor() {
+        if (state.tops.size === 0) return state.base === "red" ? "Classic Red Tray" : "White Tray";
+        var pretty = { pepperoni: "Pepperoni", mushroom: "Mushroom", onion: "Onion", pepper: "Roasted Pepper", cheese: "Extra Cheese" };
+        var list = Array.from(state.tops).map(function (t) { return pretty[t]; });
+        var base = state.base === "red" ? "Red" : "White";
+        if (list.length === 1) return list[0] + " " + base;
+        return base + " · " + list.length + " toppings";
+      }
+
+      function update() {
+        draw();
+        nameEl.textContent = nameFor();
+        metaEl.textContent = (state.size === "full" ? "Full · 12 cuts" : "Half · 6 cuts");
+        priceEl.textContent = "$" + priceFor();
+      }
+
+      // Base segment
+      document.getElementById("baseSeg").addEventListener("click", function (e) {
+        var b = e.target.closest("button"); if (!b) return;
+        state.base = b.dataset.base;
+        this.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        this.classList.toggle("white", state.base === "white");
+        update();
+      });
+      // Size segment
+      document.getElementById("sizeSeg").addEventListener("click", function (e) {
+        var b = e.target.closest("button"); if (!b) return;
+        state.size = b.dataset.size;
+        this.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        update();
+      });
+      // Toppings
+      document.getElementById("toppings").addEventListener("click", function (e) {
+        var b = e.target.closest("button"); if (!b) return;
+        var t = b.dataset.top;
+        if (state.tops.has(t)) { state.tops.delete(t); b.setAttribute("aria-pressed", "false"); }
+        else { state.tops.add(t); b.setAttribute("aria-pressed", "true"); }
+        update();
+      });
+
+      update();
+    })();
+
+    /* ---- Scroll-in reveals ---- */
+    if (!reduce && "IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+        });
+      }, { threshold: 0.14, rootMargin: "0px 0px -8% 0px" });
+      document.querySelectorAll(".scroll-in").forEach(function (el) { io.observe(el); });
+    } else {
+      document.querySelectorAll(".scroll-in").forEach(function (el) { el.classList.add("in"); });
+    }
+
+    /* ---- Sticky order bar (after hero) ---- */
+    (function () {
+      var bar = document.getElementById("orderbar");
+      var hero = document.getElementById("top");
+      if (!("IntersectionObserver" in window)) return;
+      var io = new IntersectionObserver(function (entries) {
+        bar.classList.toggle("show", !entries[0].isIntersecting);
+      }, { threshold: 0 });
+      io.observe(hero);
+    })();
+
+    /* ---- Ambient oven steam (canvas) ---- */
+    (function () {
+      if (reduce) return;
+      var cv = document.getElementById("steam");
+      var ctx = cv.getContext("2d");
+      var wisps = [];
+      var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
+      function resize() {
+        var hero = document.getElementById("top");
+        W = hero.clientWidth; H = hero.clientHeight;
+        cv.width = W * DPR; cv.height = H * DPR;
+        cv.style.width = W + "px"; cv.style.height = H + "px";
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      }
+      function seed() {
+        wisps = [];
+        var n = Math.max(6, Math.round(W / 150));
+        for (var i = 0; i < n; i++) wisps.push(mk());
+      }
+      function mk() {
+        return {
+          x: Math.random() * W,
+          y: H + Math.random() * 80,
+          r: 30 + Math.random() * 55,
+          sp: 0.15 + Math.random() * 0.35,
+          drift: (Math.random() - 0.5) * 0.3,
+          ph: Math.random() * Math.PI * 2,
+          a: 0.04 + Math.random() * 0.05
+        };
+      }
+      function tick() {
+        ctx.clearRect(0, 0, W, H);
+        for (var i = 0; i < wisps.length; i++) {
+          var w = wisps[i];
+          w.y -= w.sp; w.ph += 0.01;
+          var x = w.x + Math.sin(w.ph) * 16 + w.drift * (H - w.y) * 0.1;
+          var lifeFade = Math.max(0, Math.min(1, w.y / H));
+          var g = ctx.createRadialGradient(x, w.y, 0, x, w.y, w.r);
+          g.addColorStop(0, "rgba(244,232,214," + (w.a * lifeFade) + ")");
+          g.addColorStop(1, "rgba(244,232,214,0)");
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(x, w.y, w.r, 0, Math.PI * 2); ctx.fill();
+          if (w.y < -w.r) wisps[i] = mk();
+        }
+        raf = requestAnimationFrame(tick);
+      }
+      var raf;
+      resize(); seed(); tick();
+      var rt;
+      window.addEventListener("resize", function () {
+        clearTimeout(rt); rt = setTimeout(function () { resize(); seed(); }, 200);
+      });
+    })();
+  })();
+</script>
