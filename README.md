@@ -10,12 +10,16 @@ python -m http.server 8080   # then visit http://localhost:8080
 ```
 
 Live: https://jigsysite.vercel.app  
-Repo: https://github.com/nicholaswittle/jigsysite
+Repo: https://github.com/nicholaswittle/jigsysite  
+
+Online orders write to the shared Apex Supabase project and show up in the
+staff console. Phone ordering remains available when the kitchen is paused.
 
 ## What's in it
 
-- **Call It In** — phone-order and dine-in only (no online cart). Big tap-to-call
-  number, three steps, live open/closed status.
+- **Order ahead** — online pickup via Apex `place_order` (`ordering.js`,
+  `public_token=jigsys`) plus phone fallback. Capacity banners pause/warn from
+  `capacity_snapshot`. Static board menu stays for browsing.
 - **Full-bleed photo hero** — venue collage from Jigsy's public graphics; Call
   is the primary CTA.
 - **Real Nov 2025 menu** — Old Forge / Specialty / Gourmet / Wings / Stromboli /
