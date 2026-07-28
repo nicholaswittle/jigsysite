@@ -19,6 +19,10 @@
   var orders = [];
   var filter = 'waiting';
   var channel = null;
+  var menuCategories = [];
+  var menuItems = [];
+  var activeAvailabilityCategory = null;
+  var staffView = 'orders';
   var wakeLock = null;
   var alertedAt = new Map();
   var waitingSince = new Map();
@@ -149,18 +153,18 @@
     var waiting = today.filter(function (o) {
       return o.status === 'waiting';
     }).length;
-    var accepted = today.filter(function (o) {
-      return o.status === 'accepted';
-    }).length;
     var done = today.filter(function (o) {
       return o.status === 'completed';
     });
+    var rejected = today.filter(function (o) {
+      return o.status === 'rejected';
+    }).length;
     var sales = done.reduce(function (n, o) {
       return n + (o.total_cents || 0);
     }, 0);
     $('statWait').textContent = String(waiting);
-    $('statAccepted').textContent = String(accepted);
     $('statDone').textContent = String(done.length);
+    $('statRejected').textContent = String(rejected);
     $('statSales').textContent = money(sales);
   }
 
@@ -218,25 +222,17 @@
           actions =
             '<button type="button" class="ok" data-accept="' +
             esc(o.id) +
-            '">Accept</button>' +
+            '">Accept &amp; print</button>' +
             '<button type="button" class="danger" data-reject="' +
             esc(o.id) +
             '">Reject</button>';
-        } else if (o.status === 'accepted') {
-          actions =
-            '<button type="button" class="action" data-print="' +
-            esc(o.id) +
-            '">Print ticket</button>' +
-            '<button type="button" class="ok" data-complete="' +
-            esc(o.id) +
-            '">Mark paid &amp; done</button>';
-        } else if (o.status === 'completed') {
+        } else if (o.status === 'accepted' || o.status === 'completed') {
           actions =
             '<button type="button" class="action" data-print="' +
             esc(o.id) +
             '">Re-print</button>' +
-            '<span class="fine">Paid · ' +
-            esc(o.payment_status || 'paid') +
+            '<span class="fine">Pay at counter · ' +
+            money(o.total_cents) +
             '</span>';
         } else {
           actions =
@@ -299,11 +295,14 @@
   }
 
   async function acceptOrder(id) {
+    var now = new Date().toISOString();
+    // One tap: kitchen accept + ticket. Pay at counter is separate.
     await patchOrder(id, {
-      status: 'accepted',
-      accepted_at: new Date().toISOString(),
+      status: 'completed',
+      accepted_at: now,
+      completed_at: now,
     });
-    showToast('Accepted — print the ticket for the kitchen.');
+    showToast('Accepted — printing ticket.');
     printOrder(id);
   }
 
@@ -316,16 +315,6 @@
       reject_reason: reason,
     });
     showToast('Rejected.');
-  }
-
-  async function completeOrder(id) {
-    if (!window.confirm('Mark paid at counter and complete?')) return;
-    await patchOrder(id, {
-      status: 'completed',
-      completed_at: new Date().toISOString(),
-      payment_status: 'paid',
-    });
-    showToast('Marked paid & done.');
   }
 
   function ticketMarkup(order) {
@@ -539,6 +528,154 @@
     } catch (_) {}
   }
 
+  function renderAvailability() {
+    var countEl = $('availabilityCount');
+    var tabsEl = $('availabilityTabs');
+    var gridEl = $('menuAvailability');
+    if (!countEl || !tabsEl || !gridEl) return;
+
+    if (!menuCategories.length) {
+      countEl.textContent = 'No categories';
+      tabsEl.innerHTML = '';
+      gridEl.innerHTML = '<p class="fine">No menu categories yet.</p>';
+      return;
+    }
+
+    if (
+      !activeAvailabilityCategory ||
+      !menuCategories.some(function (c) {
+        return c.id === activeAvailabilityCategory;
+      })
+    ) {
+      activeAvailabilityCategory = menuCategories[0].id;
+    }
+
+    var cat = menuCategories.find(function (c) {
+      return c.id === activeAvailabilityCategory;
+    });
+    var catItems = menuItems.filter(function (i) {
+      return i.category_id === activeAvailabilityCategory;
+    });
+    var available = catItems.filter(function (i) {
+      return i.available !== false;
+    }).length;
+    var totalAvail = menuItems.filter(function (i) {
+      return i.available !== false;
+    }).length;
+
+    countEl.textContent =
+      available +
+      ' of ' +
+      catItems.length +
+      ' in section · ' +
+      totalAvail +
+      '/' +
+      menuItems.length +
+      ' available';
+
+    tabsEl.innerHTML = menuCategories
+      .map(function (c) {
+        return (
+          '<button type="button" class="availability-tab" role="tab" data-availability-category="' +
+          esc(c.id) +
+          '" aria-selected="' +
+          String(c.id === activeAvailabilityCategory) +
+          '">' +
+          esc(c.name) +
+          '</button>'
+        );
+      })
+      .join('');
+
+    if (!catItems.length) {
+      gridEl.innerHTML =
+        '<section class="availability-group"><h3>' +
+        esc(cat ? cat.name : '') +
+        '</h3><p class="fine">No items in this section.</p></section>';
+      return;
+    }
+
+    gridEl.innerHTML =
+      '<section class="availability-group"><h3>' +
+      esc(cat ? cat.name : '') +
+      '</h3><div class="availability-grid">' +
+      catItems
+        .map(function (item) {
+          var sold = item.available === false;
+          return (
+            '<button type="button" data-sold="' +
+            esc(item.id) +
+            '" class="availability-item' +
+            (sold ? ' is-sold' : '') +
+            '" aria-pressed="' +
+            String(sold) +
+            '"><span><strong>' +
+            esc(item.name) +
+            '</strong><small>' +
+            esc(item.description || '') +
+            '</small></span><b>' +
+            (sold ? 'Ordering off' : 'Available') +
+            '</b></button>'
+          );
+        })
+        .join('') +
+      '</div></section>';
+  }
+
+  async function loadMenuStock() {
+    if (!restaurant) return;
+    var results = await Promise.all([
+      client()
+        .from('menu_categories')
+        .select('id, name, sort_order')
+        .eq('restaurant_id', restaurant.id)
+        .order('sort_order'),
+      client()
+        .from('menu_items')
+        .select('id, category_id, name, description, available, sort_order')
+        .eq('restaurant_id', restaurant.id)
+        .order('sort_order'),
+    ]);
+    if (results[0].error) throw results[0].error;
+    if (results[1].error) throw results[1].error;
+    menuCategories = results[0].data || [];
+    menuItems = results[1].data || [];
+    renderAvailability();
+  }
+
+  async function toggleSoldOut(itemId) {
+    var item = menuItems.find(function (i) {
+      return i.id === itemId;
+    });
+    if (!item) return;
+    var next = item.available === false;
+    var res = await client().rpc('apex_set_menu_item_available', {
+      p_item_id: itemId,
+      p_available: next,
+    });
+    if (res.error) throw res.error;
+    item.available = next;
+    renderAvailability();
+    showToast(next ? item.name + ' available again.' : item.name + ' marked sold out.');
+  }
+
+  function setStaffView(view) {
+    staffView = view === 'menu' ? 'menu' : 'orders';
+    var ordersView = $('ordersView');
+    var menuView = $('menuView');
+    var ordersTab = $('ordersTab');
+    var menuTab = $('menuTab');
+    if (ordersView) ordersView.hidden = staffView !== 'orders';
+    if (menuView) menuView.hidden = staffView !== 'menu';
+    if (ordersTab) ordersTab.setAttribute('aria-selected', String(staffView === 'orders'));
+    if (menuTab) menuTab.setAttribute('aria-selected', String(staffView === 'menu'));
+    if (staffView === 'menu') {
+      loadMenuStock().catch(function (e) {
+        showToast((e && e.message) || 'Could not load menu stock.');
+      });
+    }
+  }
+
   function subscribeRealtime() {
     if (channel) client().removeChannel(channel);
     channel = client()
@@ -569,6 +706,18 @@
           refresh().catch(function () {});
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'menu_items',
+          filter: 'restaurant_id=eq.' + restaurant.id,
+        },
+        function () {
+          loadMenuStock().catch(function () {});
+        }
+      )
       .subscribe(function (status) {
         if (status === 'SUBSCRIBED') setConn(true, 'Live');
       });
@@ -583,6 +732,7 @@
     setConn(false, 'Loading…');
     await loadRestaurant();
     await refresh();
+    loadMenuStock().catch(function () {});
     subscribeRealtime();
     entered = true;
     setInterval(function () {
@@ -672,6 +822,28 @@
     }
   });
 
+  $('ordersTab').addEventListener('click', function () {
+    setStaffView('orders');
+  });
+  $('menuTab').addEventListener('click', function () {
+    setStaffView('menu');
+  });
+
+  $('availabilityTabs').addEventListener('click', function (ev) {
+    var btn = ev.target.closest('[data-availability-category]');
+    if (!btn) return;
+    activeAvailabilityCategory = btn.getAttribute('data-availability-category');
+    renderAvailability();
+  });
+
+  $('menuAvailability').addEventListener('click', function (ev) {
+    var btn = ev.target.closest('[data-sold]');
+    if (!btn) return;
+    toggleSoldOut(btn.getAttribute('data-sold')).catch(function (e) {
+      showToast((e && e.message) || 'Could not update stock.');
+    });
+  });
+
   document.querySelector('.filters').addEventListener('click', function (ev) {
     var btn = ev.target.closest('[data-filter]');
     if (!btn) return;
@@ -686,7 +858,6 @@
     var a = ev.target.closest('[data-accept]');
     var r = ev.target.closest('[data-reject]');
     var p = ev.target.closest('[data-print]');
-    var c = ev.target.closest('[data-complete]');
     if (a) acceptOrder(a.getAttribute('data-accept')).catch(function (e) {
       showToast((e && e.message) || 'Accept failed');
     });
@@ -694,9 +865,6 @@
       showToast((e && e.message) || 'Reject failed');
     });
     if (p) printOrder(p.getAttribute('data-print'));
-    if (c) completeOrder(c.getAttribute('data-complete')).catch(function (e) {
-      showToast((e && e.message) || 'Complete failed');
-    });
   });
 
   $('btnAlerts').addEventListener('click', async function () {

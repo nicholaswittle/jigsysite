@@ -24,6 +24,7 @@
   var lastOrder = null;
   var loaded = false;
   var loadError = null;
+  var catalogChannel = null;
 
   function $(id) {
     return document.getElementById(id);
@@ -753,6 +754,39 @@
 
   async function boot() {
     await loadCatalog();
+    subscribeCatalogRealtime();
+  }
+
+  function subscribeCatalogRealtime() {
+    if (!restaurant || !sb) return;
+    if (catalogChannel) sb.removeChannel(catalogChannel);
+    catalogChannel = sb
+      .channel('guest-menu-' + restaurant.id)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'menu_items',
+          filter: 'restaurant_id=eq.' + restaurant.id,
+        },
+        function () {
+          loadCatalog().then(render).catch(function () {});
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'restaurant_settings',
+          filter: 'restaurant_id=eq.' + restaurant.id,
+        },
+        function () {
+          loadCatalog().then(render).catch(function () {});
+        }
+      )
+      .subscribe();
   }
 
   function init() {

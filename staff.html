@@ -38,12 +38,17 @@
 
     <section class="stats">
       <div><span>Waiting</span><strong id="statWait">0</strong></div>
-      <div><span>In kitchen</span><strong id="statAccepted">0</strong></div>
       <div><span>Done today</span><strong id="statDone">0</strong></div>
+      <div><span>Rejected</span><strong id="statRejected">0</strong></div>
       <div><span>Sales today</span><strong id="statSales">$0</strong></div>
     </section>
 
-    <div class="layout">
+    <div class="staff-tabs" role="tablist" aria-label="Staff console views">
+      <button class="staff-tab" id="ordersTab" type="button" role="tab" aria-selected="true" aria-controls="ordersView">Orders</button>
+      <button class="staff-tab" id="menuTab" type="button" role="tab" aria-selected="false" aria-controls="menuView">Menu availability</button>
+    </div>
+
+    <div class="layout" id="ordersView" role="tabpanel" aria-labelledby="ordersTab">
       <aside class="controls">
         <div class="panel">
           <div class="row">
@@ -67,7 +72,7 @@
           <h2>Payment</h2>
           <p class="fine" id="payMode">Manual · pay at pickup (Square at counter)</p>
         </div>
-        <p class="fine tip">Keep this page open on the counter iPad. Alerts re-chime every 30s until you Accept or Reject.</p>
+        <p class="fine tip">Keep this page open on the counter iPad. Accept prints the ticket — pay at pickup is separate. Alerts re-chime every 30s until you Accept or Reject.</p>
       </aside>
 
       <section class="orders">
@@ -75,7 +80,6 @@
           <h2>Pickup queue</h2>
           <div class="filters">
             <button type="button" data-filter="waiting" class="is-on">Waiting</button>
-            <button type="button" data-filter="accepted">Kitchen</button>
             <button type="button" data-filter="completed">Done</button>
             <button type="button" data-filter="all">All</button>
           </div>
@@ -83,6 +87,19 @@
         <div id="orderList" class="order-list"></div>
       </section>
     </div>
+
+    <section class="availability-panel" id="menuView" role="tabpanel" aria-labelledby="menuTab" hidden>
+      <div class="availability-head">
+        <div>
+          <p class="eyebrow">Ordering controls</p>
+          <h2>Menu availability</h2>
+          <p class="fine">Tap any item to mark it sold out or back in stock. Same switches as Apex Orders — guests cannot add sold-out items.</p>
+        </div>
+        <div class="availability-count" id="availabilityCount">0 available</div>
+      </div>
+      <div class="availability-tabs" id="availabilityTabs" role="tablist" aria-label="Menu categories"></div>
+      <div class="availability-groups" id="menuAvailability"></div>
+    </section>
   </div>
 
   <div id="toast" class="toast" hidden></div>
