@@ -83,29 +83,74 @@
     var msg = capacityMessage();
     var banner = $('apexCapBanner');
     var onlineBtns = document.querySelectorAll('[data-apex-open]');
+    var orderingBits = document.querySelectorAll('[data-apex-ordering]');
     var paused = isPaused();
 
+    // Pause = website-only mode: strip every Order online entry point
+    // (same behavior as the old pilot). Call / menu / hours stay.
+    onlineBtns.forEach(function (btn) {
+      // Reveal only when ordering is live. Default HTML is hidden so a paused
+      // / website-only venue never flashes Order online before JS loads.
+      btn.hidden = !!paused;
+      btn.disabled = !!paused;
+      btn.setAttribute('aria-hidden', paused ? 'true' : 'false');
+      if (paused) btn.classList.add('apex-ordering-off');
+      else btn.classList.remove('apex-ordering-off');
+    });
+    orderingBits.forEach(function (el) {
+      el.hidden = !!paused;
+    });
+
+    document.body.classList.toggle('apex-ordering-paused', !!paused);
+
+    // Swap hero / order copy so paused site reads as phone-order only.
+    var heroLede = document.querySelector('[data-apex-hero-lede]');
+    if (heroLede) {
+      if (!heroLede.dataset.onlineText) {
+        heroLede.dataset.onlineText = heroLede.textContent;
+      }
+      heroLede.textContent = paused
+        ? heroLede.dataset.phoneText ||
+          'Trays cut in squares. Wings that won the town. Call it in.'
+        : heroLede.dataset.onlineText;
+    }
+    var orderLede = document.querySelector('[data-apex-order-lede]');
+    if (orderLede) {
+      if (!orderLede.dataset.onlineText) {
+        orderLede.dataset.onlineText = orderLede.textContent;
+      }
+      orderLede.textContent = paused
+        ? orderLede.dataset.phoneText ||
+          'Call it in the old way. Same kitchen, same trays — we’ll have it hot for pickup or the table.'
+        : orderLede.dataset.onlineText;
+    }
+
     if (banner) {
-      if (msg) {
+      // Only show capacity warnings when ordering is still offered.
+      if (msg && !paused) {
         banner.hidden = false;
         banner.textContent = msg;
-        banner.classList.toggle('is-blocked', paused);
-        banner.classList.toggle('is-warn', !paused);
+        banner.classList.add('is-warn');
+        banner.classList.remove('is-blocked');
       } else {
         banner.hidden = true;
       }
     }
 
-    onlineBtns.forEach(function (btn) {
-      btn.disabled = !!paused;
-      btn.setAttribute('aria-disabled', paused ? 'true' : 'false');
-      if (paused) btn.title = 'Online ordering paused — please call';
-      else btn.removeAttribute('title');
-    });
-
     var barStatus = $('orderbarStatus');
-    if (barStatus && msg && paused) {
-      barStatus.textContent = 'Ordering paused';
+    if (barStatus && paused) {
+      // Don't advertise "ordering paused" on a site sold without ordering.
+      if (!barStatus.dataset.openText) {
+        barStatus.dataset.openText = barStatus.textContent;
+      }
+      // Leave open/closed status from hours script if present; only clear our pause label.
+      if (barStatus.textContent === 'Ordering paused') {
+        barStatus.textContent = barStatus.dataset.openText || 'Open now';
+      }
+    }
+
+    if (paused && $('apexOverlay') && !$('apexOverlay').hidden) {
+      closeModal();
     }
 
     var badge = $('apexCartBadge');

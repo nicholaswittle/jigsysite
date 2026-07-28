@@ -13,7 +13,9 @@ Live: https://jigsyssite.vercel.app
 Repo: https://github.com/nicholaswittle/jigsysite  
 
 Online orders write to the shared Apex Supabase project and show up in the
-staff console. Phone ordering remains available when the kitchen is paused.
+staff console. **Pause online orders** fully removes every Order online button
+(phone + menu stay) — same as a plain website sale; reopen anytime to unlock
+ordering as an upgrade.
 
 **Staff console (counter iPad):** https://jigsyssite.vercel.app/staff.html  
 Sign in with an Apex account. Pause, prep estimate, alerts, Accept → print

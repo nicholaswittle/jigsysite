@@ -776,7 +776,15 @@
     padding: 10px 16px; border-radius: var(--radius); cursor: pointer;
   }
   .orderbar .online-btn:hover { filter: brightness(1.05); }
-  .orderbar .online-btn:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
+  .orderbar .online-btn:disabled,
+  .orderbar .online-btn.apex-ordering-off,
+  .orderbar .online-btn[hidden] { display: none !important; }
+  .topbar .online-btn:disabled,
+  .topbar .online-btn.apex-ordering-off,
+  .topbar .online-btn[hidden],
+  .btn-online.apex-ordering-off,
+  .btn-online[hidden] { display: none !important; }
+  body.apex-ordering-paused [data-apex-ordering] { display: none !important; }
   @media (max-width: 560px) { .orderbar-text .long { display: none; } }
 
   .cap-banner {
@@ -899,7 +907,9 @@
     text-decoration: none; color: #17110D !important; background: var(--crust-bright);
     padding: 8px 15px; border-radius: var(--radius); white-space: nowrap; border: none; cursor: pointer;
   }
-  .topbar .online-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .topbar .online-btn:disabled,
+  .topbar .online-btn[hidden],
+  .topbar .online-btn.apex-ordering-off { display: none !important; }
   .order-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 8px 0 18px; }
 
   /* ---------- Footer ---------- */
@@ -943,7 +953,7 @@
       <a class="nav-link" href="#visit">Visit</a>
       <span class="sep"></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch color theme">Dark</button>
-      <button class="online-btn" type="button" data-apex-open>Order online</button>
+      <button class="online-btn" type="button" data-apex-open hidden>Order online</button>
       <a class="call-btn" href="tel:+17177327708">Call</a>
     </nav>
   </div>
@@ -960,9 +970,9 @@
     <h1>Jigsy<span class="apos">'</span>s<br>Old Forge<br>Pizza</h1>
     <p class="hero-sub">Best pizza &amp; wings · Enola, PA · Est. 1999</p>
     <p class="hero-status" id="heroStatus"><span class="beat"></span><span id="heroStatusText">Checking today's hours…</span></p>
-    <p class="hero-lede">Trays cut in squares. Wings that won the town. Order online or call it in.</p>
+    <p class="hero-lede" data-apex-hero-lede data-phone-text="Trays cut in squares. Wings that won the town. Call it in.">Trays cut in squares. Wings that won the town. Order online or call it in.</p>
     <div class="cta-row">
-      <button class="btn-online" type="button" data-apex-open>Order online</button>
+      <button class="btn-online" type="button" data-apex-open hidden>Order online</button>
       <a class="btn btn-primary" href="tel:+17177327708">Call · (717) 732-7708</a>
       <a class="btn btn-ghost" href="#menu">See the board →</a>
     </div>
@@ -1037,9 +1047,9 @@
     <div class="order-head scroll-in">
       <p class="eyebrow">Ordering</p>
       <h2>Order ahead</h2>
-      <p class="order-lede">Order online for pickup, or call it in the old way. Same kitchen, same trays — your ticket lands on the staff console either way.</p>
+      <p class="order-lede" data-apex-order-lede data-phone-text="Call it in the old way. Same kitchen, same trays — we’ll have it hot for pickup or the table.">Order online for pickup, or call it in the old way. Same kitchen, same trays — your ticket lands on the staff console either way.</p>
       <div class="order-actions">
-        <button class="btn-online" type="button" data-apex-open>Order online</button>
+        <button class="btn-online" type="button" data-apex-open hidden>Order online</button>
         <a class="order-phone" href="tel:+17177327708">(717) 732-7708</a>
       </div>
       <p class="order-status" id="orderStatus"><span class="beat"></span><span id="orderStatusText">Checking today's hours…</span></p>
@@ -1412,7 +1422,7 @@
   <div class="orderbar-inner">
     <div class="orderbar-text"><strong id="orderbarStatus">Open now</strong><span class="long"> — trays, wings &amp; cold taps in Enola, PA</span></div>
     <div class="orderbar-actions">
-      <button class="online-btn" type="button" data-apex-open>Order online</button>
+      <button class="online-btn" type="button" data-apex-open hidden>Order online</button>
       <a class="call-btn" href="tel:+17177327708">Call</a>
     </div>
   </div>
