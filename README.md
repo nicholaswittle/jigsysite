@@ -9,7 +9,7 @@ cd C:/development/projects/jigsys_site
 python -m http.server 8080   # then visit http://localhost:8080
 ```
 
-Live: https://jigsysite.vercel.app  
+Live: https://jigsyssite.vercel.app  
 Repo: https://github.com/nicholaswittle/jigsysite  
 
 Online orders write to the shared Apex Supabase project and show up in the
