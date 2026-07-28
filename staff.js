@@ -25,9 +25,24 @@
   var alertTracks = {};
   var unlockPromise = null;
   var toastTimer = null;
+  var alertsEnabled = false;
+  var entered = false;
 
   function $(id) {
     return document.getElementById(id);
+  }
+
+  function showPanel(authVisible) {
+    var auth = $('staffAuth');
+    var app = $('staffApp');
+    if (auth) {
+      auth.classList.toggle('is-hidden', !authVisible);
+      auth.hidden = !authVisible;
+    }
+    if (app) {
+      app.classList.toggle('is-open', !authVisible);
+      app.hidden = authVisible;
+    }
   }
 
   function money(cents) {
@@ -491,6 +506,7 @@
   }
 
   function reviewWaitingAlerts(list) {
+    if (!alertsEnabled) return;
     var now = Date.now();
     var waitingIds = new Set();
     list.forEach(function (order) {
@@ -559,17 +575,23 @@
   }
 
   async function enterApp() {
-    $('staffAuth').hidden = true;
-    $('staffApp').hidden = false;
+    if (entered) {
+      await refresh();
+      return;
+    }
+    showPanel(false);
+    setConn(false, 'Loading…');
     await loadRestaurant();
     await refresh();
     subscribeRealtime();
+    entered = true;
     setInterval(function () {
       refresh().catch(function () {});
     }, 15000);
     setInterval(function () {
       reviewWaitingAlerts(orders);
     }, 5000);
+    showToast('Console open. Tap Enable alerts for sound.');
   }
 
   // —— Events ————————————————————————————————————————————————
@@ -577,8 +599,18 @@
   $('staffLoginForm').addEventListener('submit', async function (ev) {
     ev.preventDefault();
     var err = $('staffAuthError');
+    var btn = ev.target.querySelector('button[type="submit"]');
     err.hidden = true;
+    err.classList.remove('is-visible');
+    err.textContent = '';
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Opening…';
+    }
     try {
+      if (!window.supabase || !window.supabase.createClient) {
+        throw new Error('Supabase library failed to load. Refresh and try again.');
+      }
       var res = await client().auth.signInWithPassword({
         email: $('staffEmail').value.trim(),
         password: $('staffPassword').value,
@@ -586,9 +618,19 @@
       if (res.error) throw res.error;
       await enterApp();
     } catch (e) {
+      showPanel(true);
+      entered = false;
       err.hidden = false;
+      err.classList.add('is-visible');
       err.textContent =
-        (e && e.message) || 'Sign-in failed. Use your Apex email/password.';
+        (e && (e.message || e.error_description)) ||
+        'Sign-in failed. Use your Apex email/password.';
+      console.error('staff login', e);
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Open console';
+      }
     }
   });
 
@@ -661,6 +703,7 @@
     var btn = $('btnAlerts');
     await unlockAudio();
     await requestWakeLock();
+    alertsEnabled = true;
     var granted = false;
     if (window.Notification) {
       if (Notification.permission === 'granted') granted = true;
@@ -669,6 +712,14 @@
       }
     }
     playBeeps(1);
+    // Seed timers so the next waiting order chimes, but don't blast old ones.
+    var now = Date.now();
+    orders.forEach(function (o) {
+      if (o.status === 'waiting') {
+        waitingSince.set(o.id, now);
+        alertedAt.set(o.id, now);
+      }
+    });
     btn.textContent = granted ? 'Alerts on' : 'Sound on';
     showToast(
       granted
@@ -680,19 +731,23 @@
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'visible') requestWakeLock();
   });
-  ['pointerdown', 'keydown'].forEach(function (type) {
-    window.addEventListener(type, unlockAudio, { capture: true, once: true });
-  });
 
-  client().auth.getSession().then(function (res) {
-    if (res.data && res.data.session) {
-      enterApp().catch(function (e) {
-        $('staffAuth').hidden = false;
-        $('staffApp').hidden = true;
-        var err = $('staffAuthError');
-        err.hidden = false;
-        err.textContent = (e && e.message) || 'Could not load console.';
-      });
-    }
-  });
+  client()
+    .auth.getSession()
+    .then(function (res) {
+      if (res.data && res.data.session) {
+        enterApp().catch(function (e) {
+          showPanel(true);
+          entered = false;
+          var err = $('staffAuthError');
+          err.hidden = false;
+          err.classList.add('is-visible');
+          err.textContent = (e && e.message) || 'Could not load console.';
+          console.error('staff boot', e);
+        });
+      }
+    })
+    .catch(function (e) {
+      console.error('staff session', e);
+    });
 })();
