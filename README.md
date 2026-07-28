@@ -15,6 +15,10 @@ Repo: https://github.com/nicholaswittle/jigsysite
 Online orders write to the shared Apex Supabase project and show up in the
 staff console. Phone ordering remains available when the kitchen is paused.
 
+**Staff console (counter iPad):** https://jigsyssite.vercel.app/staff.html  
+Sign in with an Apex account. Pause, prep estimate, alerts, Accept → print
+ticket to the Star, Mark paid & done. Pay stays at the Square counter.
+
 ## What's in it
 
 - **Order ahead** — online pickup via Apex `place_order` (`ordering.js`,

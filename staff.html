@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jigsy's · Staff Order Console</title>
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#120D0A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="staff.css">
+</head>
+<body>
+  <div id="staffAuth" class="auth-wrap">
+    <form id="staffLoginForm" class="auth-card">
+      <p class="eyebrow">Staff · Apex account</p>
+      <h1>Order console</h1>
+      <p class="fine">Sign in with your Apex email. Same kitchen queue as the OS Orders tab.</p>
+      <label for="staffEmail">Email</label>
+      <input id="staffEmail" type="email" autocomplete="username" required>
+      <label for="staffPassword">Password</label>
+      <input id="staffPassword" type="password" autocomplete="current-password" required>
+      <p class="auth-error" id="staffAuthError" hidden></p>
+      <button class="primary" type="submit">Open console</button>
+    </form>
+  </div>
+
+  <div id="staffApp" hidden>
+    <header class="top">
+      <div>
+        <strong id="restName">Jigsy's</strong>
+        <span class="conn" id="connStatus">Connecting…</span>
+      </div>
+      <div class="top-actions">
+        <button type="button" id="btnAlerts" class="ghost">Enable alerts</button>
+        <button type="button" id="btnLogout" class="ghost">Sign out</button>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div><span>Waiting</span><strong id="statWait">0</strong></div>
+      <div><span>In kitchen</span><strong id="statAccepted">0</strong></div>
+      <div><span>Done today</span><strong id="statDone">0</strong></div>
+      <div><span>Sales today</span><strong id="statSales">$0</strong></div>
+    </section>
+
+    <div class="layout">
+      <aside class="controls">
+        <div class="panel">
+          <div class="row">
+            <div>
+              <h2>Pause online orders</h2>
+              <p class="fine">Hides Order online on the site.</p>
+            </div>
+            <button type="button" class="switch" id="pauseToggle" role="switch" aria-checked="false"></button>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Pickup estimate</h2>
+          <p class="fine">Shown on new guest checkouts. 10–90 min.</p>
+          <div class="stepper">
+            <button type="button" id="prepDown">−</button>
+            <output id="prepOut">30 min</output>
+            <button type="button" id="prepUp">+</button>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Payment</h2>
+          <p class="fine" id="payMode">Manual · pay at pickup (Square at counter)</p>
+        </div>
+        <p class="fine tip">Keep this page open on the counter iPad. Alerts re-chime every 30s until you Accept or Reject.</p>
+      </aside>
+
+      <section class="orders">
+        <div class="orders-head">
+          <h2>Pickup queue</h2>
+          <div class="filters">
+            <button type="button" data-filter="waiting" class="is-on">Waiting</button>
+            <button type="button" data-filter="accepted">Kitchen</button>
+            <button type="button" data-filter="completed">Done</button>
+            <button type="button" data-filter="all">All</button>
+          </div>
+        </div>
+        <div id="orderList" class="order-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+  <section class="print-ticket" id="printTicket" aria-hidden="true"></section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="staff.js"></script>
+</body>
+</html>
