@@ -340,10 +340,15 @@
       var catItems = items.filter(function (i) {
         return i.category_id === cat.id;
       });
-      if (!catItems.length) return;
+      var availableItems = catItems.filter(function (i) {
+        return i.available !== false;
+      });
+      // Guest view: skip archived/stub categories with nothing orderable.
+      if (!availableItems.length) return;
       html += '<section class="apex-cat"><h3>' + esc(cat.name) + '</h3>';
       catItems.forEach(function (item) {
         var sold = item.available === false;
+        if (sold) return;
         html +=
           '<button type="button" class="apex-item" data-add="' +
           esc(item.id) +
@@ -360,6 +365,9 @@
           '</span>' +
           '<span class="apex-price">' +
           money(item.price_cents) +
+          ((groupsByItem[item.id] || []).length
+            ? '<span class="apex-desc">Customize</span>'
+            : '') +
           '</span></button>';
       });
       html += '</section>';
