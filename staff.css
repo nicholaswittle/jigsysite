@@ -42,7 +42,11 @@ body {
   color: var(--text);
   font-size: 1rem;
 }
-.auth-error { color: var(--sauce); margin: 0; }
+.auth-error { color: var(--sauce); margin: 0; display: none; }
+.auth-error.is-visible { display: block; }
+.auth-wrap.is-hidden { display: none !important; }
+#staffApp { display: none; }
+#staffApp.is-open { display: block; }
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.08em;
