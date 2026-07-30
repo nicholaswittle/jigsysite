@@ -313,12 +313,47 @@
   async function rejectOrder(id) {
     var reason = window.prompt('Reject reason?', 'Kitchen too busy') || '';
     if (!reason) return;
+
+    // Give the money back BEFORE rejecting. An online order that is rejected
+    // without a refund has taken a guest's money for food nobody will make;
+    // their only recourse is a chargeback, which costs the venue a dispute fee
+    // on top of the refund. Refunding first means a failure leaves the order
+    // open -- recoverable -- instead of rejected and unpaid-back.
+    var order = orders.find(function (o) {
+      return o.id === id;
+    });
+    var wasPaid =
+      order &&
+      (order.payment_status === 'paid' || order.payment_mode === 'pay_now') &&
+      order.payment_status !== 'refunded';
+
+    if (wasPaid) {
+      try {
+        var res = await client().functions.invoke('refund-order', {
+          body: {
+            organization_id: restaurant.organization_id,
+            order_id: id,
+            reason: reason,
+          },
+        });
+        var data = res && res.data;
+        var ok = data && (data.refunded === true || data.refunded === false);
+        if (!ok || (data && data.error)) {
+          showToast('Could not refund — order left open. Refund in Stripe first.');
+          return;
+        }
+      } catch (e) {
+        showToast('Could not refund — order left open. Refund in Stripe first.');
+        return;
+      }
+    }
+
     await patchOrder(id, {
       status: 'rejected',
       rejected_at: new Date().toISOString(),
       reject_reason: reason,
     });
-    showToast('Rejected.');
+    showToast(wasPaid ? 'Rejected and refunded.' : 'Rejected.');
   }
 
   function ticketMarkup(order) {
