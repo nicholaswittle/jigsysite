@@ -21,6 +21,10 @@
   var cart = [];
   var view = 'menu'; // menu | cart | success
   var payNow = false;
+  // Set when this page load is a return from Stripe. The ordering UI is a modal
+  // that starts hidden, so a guest coming back from checkout would otherwise
+  // land on the ordinary homepage with no sign their card was charged.
+  var returnedFromCheckout = false;
   var placing = false;
   var lastOrder = null;
   var loaded = false;
@@ -354,13 +358,26 @@
     render();
   }
 
+  /// Reveals the ordering panel without deciding which screen it shows.
+  ///
+  /// Split out from openModal because a guest returning from Stripe needs the
+  /// panel opened on their receipt, not reset to the menu -- and needs it even
+  /// if ordering was paused while they were away. Their card is already
+  /// charged; hiding the confirmation behind a pause notice would leave them
+  /// with no evidence the order exists.
+  function showOverlay() {
+    var ov = $('apexOverlay');
+    if (!ov) return;
+    ov.hidden = false;
+    document.body.classList.add('apex-lock');
+  }
+
   function openModal() {
     if (isPaused()) {
       alert('Online ordering is paused right now. Please call (717) 732-7708.');
       return;
     }
-    $('apexOverlay').hidden = false;
-    document.body.classList.add('apex-lock');
+    showOverlay();
     view = 'menu';
     render();
     if (!loaded) {
@@ -897,6 +914,8 @@
       // Nothing to clean up in private browsing.
     }
 
+    returnedFromCheckout = true;
+
     if (paid === '1' && code) {
       cart = [];
       lastOrder = { public_token: code, paid_pending_confirmation: true };
@@ -979,7 +998,25 @@
     if (body) body.addEventListener('click', onBodyClick);
 
     // Warm the catalog + capacity so the bar can show pause state early.
-    boot().catch(function () {});
+    //
+    // boot() also reads the Stripe return parameters. When it finds them, open
+    // the panel on whatever screen they chose -- a guest who has just paid must
+    // land on their order code, not on the homepage wondering whether the
+    // charge went through.
+    boot()
+      .then(function () {
+        if (returnedFromCheckout) {
+          showOverlay();
+          render();
+        }
+      })
+      .catch(function () {
+        // The menu failed to load, but a paid guest still deserves their code.
+        if (returnedFromCheckout) {
+          showOverlay();
+          render();
+        }
+      });
     setInterval(refreshCapacity, 60000);
   }
 
