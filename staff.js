@@ -120,6 +120,12 @@
             'order_item_modifiers(name, price_delta_cents))'
         )
         .eq('restaurant_id', restaurant.id)
+        // An order sits in pending_payment from the moment Pay now is chosen
+        // until Stripe confirms. Most of those are people who changed their
+        // mind at the card form, and the kitchen must never see them: nothing
+        // was charged and nothing should be cooked. The webhook moves genuine
+        // payments to waiting, so filtering here hides only the abandoned ones.
+        .neq('status', 'pending_payment')
         .order('submitted_at', { ascending: false })
         .limit(80),
     ]);

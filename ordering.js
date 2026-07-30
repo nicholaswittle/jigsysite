@@ -317,6 +317,53 @@
     return itemId + '|' + ids;
   }
 
+  var CART_KEY = 'apexCart';
+
+  /// The cart lived only in memory, so paying navigated the browser to Stripe
+  /// and anyone who backed out returned to an empty basket -- their order sat
+  /// unpaid in the database while they had to rebuild it from scratch. Session
+  /// storage keeps it for the tab without outliving the visit.
+  function saveCart() {
+    try {
+      sessionStorage.setItem(CART_KEY, JSON.stringify(cart));
+    } catch (ignored) {
+      // Private browsing or a full quota. The cart still works for this page.
+    }
+  }
+
+  function restoreCart() {
+    var raw;
+    try {
+      raw = sessionStorage.getItem(CART_KEY);
+    } catch (ignored) {
+      return;
+    }
+    if (!raw) return;
+    try {
+      var saved = JSON.parse(raw);
+      if (!Array.isArray(saved)) return;
+      // Prices and availability may have moved while they were away, so keep
+      // only lines whose item is still on the menu, and re-read the price from
+      // the live catalog rather than trusting what was stored.
+      cart = saved.filter(function (line) {
+        if (!line || !line.menu_item_id || !line.quantity) return false;
+        var item = items.find(function (i) {
+          return i.id === line.menu_item_id;
+        });
+        if (!item || item.available === false) return false;
+        line.unitPriceCents =
+          item.price_cents +
+          (line.modifiers || []).reduce(function (n, m) {
+            return n + (m.price_delta_cents || 0);
+          }, 0);
+        line.name = item.name;
+        return true;
+      });
+    } catch (ignored) {
+      cart = [];
+    }
+  }
+
   function addLine(item, mods) {
     var key = lineKey(item.id, mods);
     var existing = cart.find(function (l) {
@@ -339,6 +386,7 @@
         modifiers: mods,
       });
     }
+    saveCart();
     syncChrome();
     render();
   }
@@ -354,6 +402,7 @@
         return l.key !== key;
       });
     }
+    saveCart();
     syncChrome();
     render();
   }
@@ -808,6 +857,7 @@
 
       lastOrder = data;
       cart = [];
+      saveCart();
       view = 'success';
       syncChrome();
     } catch (e) {
@@ -918,6 +968,7 @@
 
     if (paid === '1' && code) {
       cart = [];
+      saveCart();
       lastOrder = { public_token: code, paid_pending_confirmation: true };
       view = 'success';
     } else if (paid === '0') {
@@ -941,6 +992,10 @@
   async function boot() {
     consumePaymentReturn();
     await loadCatalog();
+    // After the catalog, never before -- restoring re-reads prices from the
+    // live menu rather than trusting what the browser stored.
+    if (!returnedFromCheckout) restoreCart();
+    syncChrome();
     subscribeCatalogRealtime();
   }
 
