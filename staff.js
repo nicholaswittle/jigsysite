@@ -409,7 +409,7 @@
       money(order.tax_cents) +
       '</strong></div>' +
       (order.fee_cents
-        ? '<div class="ticket-total"><span>Fee</span><strong>' +
+        ? '<div class="ticket-total"><span>Service fee</span><strong>' +
           money(order.fee_cents) +
           '</strong></div>'
         : '') +
