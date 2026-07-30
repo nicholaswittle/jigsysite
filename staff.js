@@ -259,8 +259,10 @@
           esc(cust.phone) +
           '</div>' +
           '<div class="due">' +
-          money(o.total_cents) +
-          ' due at pickup</div>' +
+          (o.payment_status === 'paid' || o.payment_mode === 'pay_now'
+            ? 'PAID ONLINE · ' + money(o.total_cents) + ' — do not collect'
+            : money(o.total_cents) + ' due at pickup') +
+          '</div>' +
           (o.notes
             ? '<div class="meta">NOTE: ' + esc(o.notes) + '</div>'
             : '') +
@@ -374,11 +376,21 @@
           money(order.fee_cents) +
           '</strong></div>'
         : '') +
-      '<div class="ticket-total ticket-due"><span>DUE AT PICKUP</span><strong>' +
-      money(order.total_cents) +
-      '</strong></div>' +
-      '<div class="ticket-rule"></div>' +
-      '<div class="ticket-center">COLLECT ON SQUARE AT COUNTER<br>THEN MARK PAID IN THIS CONSOLE</div>'
+      // An online payment has already been taken. Printing "DUE AT PICKUP" and
+      // "COLLECT AT COUNTER" on a paid order tells whoever works the counter to
+      // charge the customer a second time -- on paper, with authority, after
+      // the screen has been forgotten.
+      (order.payment_status === 'paid' || order.payment_mode === 'pay_now'
+        ? '<div class="ticket-total ticket-due"><span>PAID ONLINE</span><strong>' +
+          money(order.total_cents) +
+          '</strong></div>' +
+          '<div class="ticket-rule"></div>' +
+          '<div class="ticket-center">DO NOT COLLECT<br>ALREADY PAID ONLINE</div>'
+        : '<div class="ticket-total ticket-due"><span>DUE AT PICKUP</span><strong>' +
+          money(order.total_cents) +
+          '</strong></div>' +
+          '<div class="ticket-rule"></div>' +
+          '<div class="ticket-center">COLLECT ON SQUARE AT COUNTER<br>THEN MARK PAID IN THIS CONSOLE</div>')
     );
   }
 
