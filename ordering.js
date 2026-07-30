@@ -516,6 +516,28 @@
         '</div>';
     }
 
+    // Jump links. A hundred-plus items in one scrolling column means someone
+    // hunting for wings reads the whole menu to find them -- and on a phone
+    // that is a lot of thumb. Built from the same filter the sections use, so
+    // a chip can never point at a heading that was skipped.
+    var shownCats = categories.filter(function (cat) {
+      return items.some(function (i) {
+        return i.category_id === cat.id && i.available !== false;
+      });
+    });
+    if (shownCats.length > 1) {
+      html += '<nav class="apex-jump" aria-label="Jump to a section">';
+      shownCats.forEach(function (cat) {
+        html +=
+          '<button type="button" class="apex-chip" data-jump="apexCat-' +
+          esc(cat.id) +
+          '">' +
+          esc(cat.name) +
+          '</button>';
+      });
+      html += '</nav>';
+    }
+
     categories.forEach(function (cat) {
       var catItems = items.filter(function (i) {
         return i.category_id === cat.id;
@@ -525,7 +547,12 @@
       });
       // Guest view: skip archived/stub categories with nothing orderable.
       if (!availableItems.length) return;
-      html += '<section class="apex-cat"><h3>' + esc(cat.name) + '</h3>';
+      html +=
+        '<section class="apex-cat" id="apexCat-' +
+        esc(cat.id) +
+        '"><h3>' +
+        esc(cat.name) +
+        '</h3><div class="apex-cat-items">';
       catItems.forEach(function (item) {
         var sold = item.available === false;
         if (sold) return;
@@ -550,7 +577,7 @@
             : '') +
           '</span></button>';
       });
-      html += '</section>';
+      html += '</div></section>';
     });
 
     if (!html) {
@@ -934,7 +961,16 @@
   }
 
   function onBodyClick(ev) {
-    var t = ev.target.closest('[data-paynow]');
+    var t = ev.target.closest('[data-jump]');
+    if (t) {
+      var target = document.getElementById(t.getAttribute('data-jump'));
+      if (target) {
+        // Scroll the panel body, not the page behind it.
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
+    t = ev.target.closest('[data-paynow]');
     if (t) {
       payNow = t.getAttribute('data-paynow') === '1';
       render(); // Totals move when this changes, so redraw rather than restyle.

@@ -61,7 +61,7 @@
       "https://www.instagram.com/jigsys_brewpub_restaurant",
       "https://www.facebook.com/jigsyspizza/",
       "https://www.jigsyspizza.com/",
-      "https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m6!3m5!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf"
+      "https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m8!3m7!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf!9m1!1b1"
     ]
   }
   </script>
@@ -806,6 +806,19 @@
     background: var(--surface); color: var(--ink); border-left: 1px solid var(--line);
     display: flex; flex-direction: column; box-shadow: -18px 0 40px rgba(0,0,0,0.25);
   }
+  /* A 440px drawer is right on a phone and cramped on a laptop -- a hundred-item
+     menu in one narrow column is a long scroll through a mostly empty screen.
+     Widen it and run the items in two columns where there is room to. */
+  @media (min-width: 900px) {
+    .apex-panel { width: min(860px, 92vw); }
+    .apex-body { padding: 12px 24px 32px; }
+    .apex-cat-items { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .apex-jump { margin: -12px 0 16px; }
+  }
+  @media (min-width: 1400px) {
+    .apex-panel { width: min(1040px, 80vw); }
+    .apex-cat-items { grid-template-columns: repeat(3, 1fr); }
+  }
   .apex-head {
     display: flex; align-items: center; gap: 10px; padding: 16px 16px 12px;
     border-bottom: 1px solid var(--line);
@@ -824,8 +837,28 @@
     border-radius: 999px; background: var(--sauce); color: #fff;
     font-size: 0.68rem; display: grid; place-items: center; padding: 0 4px;
   }
-  .apex-body { flex: 1; overflow: auto; padding: 12px 16px 28px; }
-  .apex-cat { margin: 0 0 22px; }
+  .apex-body { flex: 1; overflow: auto; padding: 12px 16px 28px; scroll-behavior: smooth; }
+
+  /* Jump links. Sticky because the whole point is reaching them from halfway
+     down a hundred-item menu, not scrolling back to the top first. */
+  .apex-jump {
+    position: sticky; top: 0; z-index: 2;
+    display: flex; gap: 6px; overflow-x: auto; padding: 8px 0 10px;
+    margin: -12px 0 14px; background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    scrollbar-width: none;
+  }
+  .apex-jump::-webkit-scrollbar { display: none; }
+  .apex-chip {
+    flex: 0 0 auto; padding: 7px 12px; border-radius: 999px;
+    border: 1px solid var(--line-strong); background: var(--ground); color: var(--ink);
+    font-family: var(--display); font-size: 0.72rem; letter-spacing: 0.06em;
+    text-transform: uppercase; cursor: pointer; white-space: nowrap;
+  }
+  .apex-chip:hover { border-color: var(--ink); }
+  .apex-chip:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  /* Headings sit below the sticky bar when jumped to, not underneath it. */
+  .apex-cat { margin: 0 0 22px; scroll-margin-top: 56px; }
   .apex-cat h3 {
     margin: 0 0 10px; font-family: var(--display); font-size: 0.72rem;
     letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
@@ -940,6 +973,8 @@
   .footer-col a { display: block; font-family: var(--display); font-size: 0.92rem; text-decoration: none; color: var(--ink); margin-bottom: 8px; }
   .footer-col a:hover { color: var(--sauce); }
   .concept-note { max-width: var(--maxw); margin: 32px auto 0; padding: 14px 24px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.78rem; font-family: var(--display); letter-spacing: 0.02em; }
+  .built-by { max-width: var(--maxw); margin: 10px auto 0; padding: 0 24px 20px; color: var(--muted); font-size: 0.78rem; font-family: var(--display); letter-spacing: 0.02em; }
+  .built-by a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 
   a:focus-visible, button:focus-visible, .btn:focus-visible, .chip:focus-visible {
     outline: 2px solid var(--crust-bright); outline-offset: 3px; border-radius: 2px;
@@ -1083,7 +1118,7 @@
       </div>
       <div class="order-step">
         <div class="of-num">03</div>
-        <div><h3>Call &amp; grab it</h3><p>Ring us for pickup or take-out — or come sit down for the patio and the downstairs lounge.</p></div>
+        <div><h3>Send it &amp; grab it</h3><p>Order online or give us a ring, then pick it up hot — or stay and eat, out on the patio or down in the lounge.</p></div>
       </div>
     </div>
   </div>
@@ -1326,7 +1361,7 @@
   <div class="voice-foot">
     <p>Short guest notes — not a scraped review feed. Full write-ups live on Google, TripAdvisor, and Yelp.</p>
     <div class="voice-links">
-      <a class="trust-chip" href="https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m6!3m5!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf" target="_blank" rel="noopener">Google · <em>4.5 · 553</em> →</a>
+      <a class="trust-chip" href="https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m8!3m7!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf!9m1!1b1" target="_blank" rel="noopener">Google · <em>4.5 · 553</em> →</a>
       <a class="trust-chip" href="https://www.tripadvisor.com/Restaurant_Review-g52601-d449832-Reviews-Jigsy_s_Brewpub_Restaurant-Enola_Pennsylvania.html" target="_blank" rel="noopener">TripAdvisor · <em>4.5</em> →</a>
       <a class="trust-chip" href="https://www.yelp.com/biz/jigsys-brewpub-and-restaurant-enola" target="_blank" rel="noopener">Yelp · <em>4.0</em> →</a>
     </div>
@@ -1405,7 +1440,7 @@
       <p class="addr-line">225 N Enola Road · Rt 11/15</p>
       <p class="addr-line">Enola, PA 17025</p>
       <div class="trust-row">
-        <a class="trust-chip" href="https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m6!3m5!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf" target="_blank" rel="noopener">Google · <em>4.5 · 553</em> →</a>
+        <a class="trust-chip" href="https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m8!3m7!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf!9m1!1b1" target="_blank" rel="noopener">Google · <em>4.5 · 553</em> →</a>
         <a class="trust-chip" href="https://www.tripadvisor.com/Restaurant_Review-g52601-d449832-Reviews-Jigsy_s_Brewpub_Restaurant-Enola_Pennsylvania.html" target="_blank" rel="noopener">TripAdvisor · <em>4.5</em> →</a>
         <a class="trust-chip" href="https://www.yelp.com/biz/jigsys-brewpub-and-restaurant-enola" target="_blank" rel="noopener">Yelp · <em>4.0</em> →</a>
         <a class="trust-chip" href="https://maps.google.com/?q=225+N+Enola+Road+Enola+PA+17025" target="_blank" rel="noopener">Directions →</a>
@@ -1427,13 +1462,14 @@
         <p>Old Forge–style pizza, award-winning wings, and cold local taps in Enola, PA.</p>
       </div>
       <div class="footer-cols">
-        <div class="footer-col"><h4>Explore</h4><a href="#picks">What’s good</a><a href="#order">How to order</a><a href="#menu">Menu</a><a href="#faq">FAQ</a><a href="#visit">Hours &amp; Location</a><a href="staff.html">Staff console</a></div>
-        <div class="footer-col"><h4>Follow</h4><a href="https://www.instagram.com/jigsys_brewpub_restaurant" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/jigsyspizza/" target="_blank" rel="noopener">Facebook</a><a href="https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m6!3m5!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf" target="_blank" rel="noopener">Google · 4.5</a><a href="https://www.yelp.com/biz/jigsys-brewpub-and-restaurant-enola" target="_blank" rel="noopener">Yelp</a><a href="https://www.tripadvisor.com/Restaurant_Review-g52601-d449832-Reviews-Jigsy_s_Brewpub_Restaurant-Enola_Pennsylvania.html" target="_blank" rel="noopener">TripAdvisor</a></div>
+        <div class="footer-col"><h4>Explore</h4><a href="#picks">What’s good</a><a href="#order">How to order</a><a href="#menu">Menu</a><a href="#faq">FAQ</a><a href="#visit">Hours &amp; Location</a></div>
+        <div class="footer-col"><h4>Follow</h4><a href="https://www.instagram.com/jigsys_brewpub_restaurant" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/jigsyspizza/" target="_blank" rel="noopener">Facebook</a><a href="https://www.google.com/maps/place/Jigsy's+%7C+Brewpub+%26+Restaurant/@40.2949188,-76.9301358,17z/data=!4m8!3m7!1s0x89c8c3f7f433a581:0x3ba0ece5ea11aeaf!9m1!1b1" target="_blank" rel="noopener">Google · 4.5</a><a href="https://www.yelp.com/biz/jigsys-brewpub-and-restaurant-enola" target="_blank" rel="noopener">Yelp</a><a href="https://www.tripadvisor.com/Restaurant_Review-g52601-d449832-Reviews-Jigsy_s_Brewpub_Restaurant-Enola_Pennsylvania.html" target="_blank" rel="noopener">TripAdvisor</a></div>
         <div class="footer-col"><h4>Find us</h4><a href="tel:+17177327708">(717) 732-7708</a><a href="https://maps.google.com/?q=225+N+Enola+Road+Enola+PA+17025" target="_blank" rel="noopener">225 N Enola Rd · Rt 11/15, Enola PA</a></div>
       </div>
     </div>
   </div>
   <p class="concept-note">Independent redesign concept — not the official Jigsy's site. Menu, prices, hours, and contact details are transcribed from Jigsy's published Nov 2025 menu; prices subject to change. Food and lounge photos pulled from public Google guest uploads for this concept demo — swap for owner originals before any client handoff.</p>
+  <p class="built-by">Site &amp; online ordering by <a href="https://wisensellc.com" target="_blank" rel="noopener">WiSense LLC</a></p>
 </footer>
 
 <div class="orderbar" id="orderbar">
