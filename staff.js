@@ -259,7 +259,9 @@
           esc(cust.phone) +
           '</div>' +
           '<div class="due">' +
-          (o.payment_status === 'paid' || o.payment_mode === 'pay_now'
+          (o.payment_status === 'refunded'
+            ? 'REFUNDED · ' + money(o.total_cents) + ' — do not hand over'
+            : o.payment_status === 'paid' || o.payment_mode === 'pay_now'
             ? 'PAID ONLINE · ' + money(o.total_cents) + ' — do not collect'
             : money(o.total_cents) + ' due at pickup') +
           '</div>' +
@@ -380,7 +382,13 @@
       // "COLLECT AT COUNTER" on a paid order tells whoever works the counter to
       // charge the customer a second time -- on paper, with authority, after
       // the screen has been forgotten.
-      (order.payment_status === 'paid' || order.payment_mode === 'pay_now'
+      (order.payment_status === 'refunded'
+        ? '<div class="ticket-total ticket-due"><span>REFUNDED</span><strong>' +
+          money(order.total_cents) +
+          '</strong></div>' +
+          '<div class="ticket-rule"></div>' +
+          '<div class="ticket-center">REFUNDED — DO NOT HAND OVER</div>'
+        : order.payment_status === 'paid' || order.payment_mode === 'pay_now'
         ? '<div class="ticket-total ticket-due"><span>PAID ONLINE</span><strong>' +
           money(order.total_cents) +
           '</strong></div>' +
