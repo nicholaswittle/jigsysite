@@ -82,12 +82,10 @@
   /// stripe_not_connected otherwise, so offering the choice would be offering a
   /// dead end.
   function canPayNow() {
-    return !!(
-      settings &&
-      settings.stripe_charges_enabled &&
-      settings.stripe_account_id &&
-      String(settings.stripe_account_id).trim()
-    );
+    // stripe_charges_enabled alone. The account id is not readable by guests
+    // and does not need to be -- a stranger deciding whether to show a Pay now
+    // button has no business knowing which Stripe account is behind it.
+    return !!(settings && settings.stripe_charges_enabled);
   }
 
   function isPaused() {
@@ -216,7 +214,7 @@
     var results = await Promise.all([
       client
         .from('restaurant_settings')
-        .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled, stripe_account_id')
+        .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled')
         .eq('restaurant_id', restaurant.id)
         .maybeSingle(),
       client
@@ -297,7 +295,7 @@
       if (restaurant) {
         var s = await client
           .from('restaurant_settings')
-          .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled, stripe_account_id')
+          .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled')
           .eq('restaurant_id', restaurant.id)
           .maybeSingle();
         if (!s.error && s.data) settings = s.data;
