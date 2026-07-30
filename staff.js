@@ -192,12 +192,30 @@
 
   function renderOrders() {
     var list = $('orderList');
+    var dayStart = new Date(todayStartIso()).getTime();
+
+    // The board clears itself overnight. Yesterday's finished orders drop out of
+    // view at midnight so the kitchen opens on a clean screen -- but the rows
+    // stay in the database, because the printed ticket is not a record of the
+    // money. The order is the only thing tying a Stripe charge to what was
+    // actually sold, and it is what a refund, a chargeback weeks later, and the
+    // sales reporting all read from.
+    //
+    // Anything still live is exempt. An order taken at 11:50pm and not yet
+    // collected must not disappear ten minutes later -- that is real work, and
+    // hiding it would lose a customer their food.
     var visible = orders.filter(function (o) {
+      var settled = o.status === 'completed' || o.status === 'rejected';
+      if (settled && new Date(o.submitted_at).getTime() < dayStart) return false;
       if (filter === 'all') return true;
       return o.status === filter;
     });
     if (!visible.length) {
-      list.innerHTML = '<p class="fine">No orders in this view.</p>';
+      // Say which day this is, so an empty board reads as "nothing yet today"
+      // rather than "the orders are gone".
+      list.innerHTML =
+        '<p class="fine">No orders today in this view. Yesterday\'s are kept ' +
+        'for refunds and reporting, just not shown here.</p>';
       return;
     }
     list.innerHTML = visible
