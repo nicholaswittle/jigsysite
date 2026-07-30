@@ -858,6 +858,23 @@
     width: 28px; height: 28px; border-radius: var(--radius); border: 1px solid var(--line-strong);
     background: var(--ground); cursor: pointer; color: var(--ink);
   }
+  /* Payment choice. Two equal targets rather than a dropdown or a checkbox:
+     this is a decision, on a phone, often one-handed, and the total below it
+     changes when it is touched. */
+  .apex-paychoice { display: flex; gap: 8px; margin: 16px 0 4px; }
+  .apex-paybtn {
+    flex: 1; padding: 12px 10px; border-radius: var(--radius);
+    border: 1px solid var(--line-strong); background: var(--ground); color: var(--ink);
+    font-family: var(--display); font-size: 0.82rem; letter-spacing: 0.04em;
+    cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .apex-paybtn:hover { border-color: var(--ink); }
+  .apex-paybtn.is-on { background: var(--ink); color: var(--ground); border-color: var(--ink); font-weight: 700; }
+  /* Selection must survive without colour -- a card payment is the wrong place
+     to make someone guess which option is active. */
+  .apex-paybtn.is-on::before { content: '✓ '; }
+  .apex-paybtn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
   .apex-totals { margin: 16px 0; font-family: var(--display); font-size: 0.9rem; }
   .apex-totals > div { display: flex; justify-content: space-between; margin-bottom: 6px; }
   .apex-total { font-weight: 800; font-size: 1.05rem; margin-top: 8px; }

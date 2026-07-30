@@ -20,6 +20,7 @@
   var capacity = null;
   var cart = [];
   var view = 'menu'; // menu | cart | success
+  var payNow = false;
   var placing = false;
   var lastOrder = null;
   var loaded = false;
@@ -55,8 +56,34 @@
     return settings && settings.fee_cents != null ? Number(settings.fee_cents) : 0;
   }
 
+  /// The venue's 1.5%, charged to the guest rather than taken out of the
+  /// venue's money. Mirrors serviceFeeCents in the Apex app -- 1.5% of subtotal
+  /// plus tax, and nothing at all for pay-at-pickup, because it covers the cost
+  /// of taking a card. Keep the two in step: a guest who pays a different total
+  /// here than in the app is a support call.
+  ///
+  /// It is a service fee, never a "card fee" or "processing fee", and it never
+  /// varies by which card is used -- that distinction is what keeps it a
+  /// service fee rather than a surcharge.
+  function serviceFeeCents(sub) {
+    if (!payNow) return 0;
+    return Math.round((sub + taxCents(sub)) * 0.015);
+  }
+
   function totalCents(sub) {
-    return sub + feeCents() + taxCents(sub);
+    return sub + feeCents() + taxCents(sub) + serviceFeeCents(sub);
+  }
+
+  /// Whether this venue can take a card at all. place_order refuses with
+  /// stripe_not_connected otherwise, so offering the choice would be offering a
+  /// dead end.
+  function canPayNow() {
+    return !!(
+      settings &&
+      settings.stripe_charges_enabled &&
+      settings.stripe_account_id &&
+      String(settings.stripe_account_id).trim()
+    );
   }
 
   function isPaused() {
@@ -185,7 +212,7 @@
     var results = await Promise.all([
       client
         .from('restaurant_settings')
-        .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode')
+        .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled, stripe_account_id')
         .eq('restaurant_id', restaurant.id)
         .maybeSingle(),
       client
@@ -266,7 +293,7 @@
       if (restaurant) {
         var s = await client
           .from('restaurant_settings')
-          .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode')
+          .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled, stripe_account_id')
           .eq('restaurant_id', restaurant.id)
           .maybeSingle();
         if (!s.error && s.data) settings = s.data;
@@ -463,6 +490,26 @@
     html += '</div>';
 
     var sub = cartSubtotal();
+
+    // Pay at pickup stays the default. Someone who has always phoned this order
+    // in should not have to make a payment decision to get dinner, and a card
+    // form is the easiest place to lose an order.
+    if (canPayNow()) {
+      html +=
+        '<div class="apex-paychoice" role="radiogroup" aria-label="How would you like to pay?">' +
+        '<button type="button" role="radio" aria-checked="' +
+        (!payNow ? 'true' : 'false') +
+        '" class="apex-paybtn' +
+        (!payNow ? ' is-on' : '') +
+        '" data-paynow="0">Pay at pickup</button>' +
+        '<button type="button" role="radio" aria-checked="' +
+        (payNow ? 'true' : 'false') +
+        '" class="apex-paybtn' +
+        (payNow ? ' is-on' : '') +
+        '" data-paynow="1">Pay now by card</button>' +
+        '</div>';
+    }
+
     html +=
       '<div class="apex-totals">' +
       '<div><span>Subtotal</span><span>' +
@@ -473,11 +520,26 @@
       '</span></div>' +
       '<div><span>Tax</span><span>' +
       money(taxCents(sub)) +
-      '</span></div>' +
+      '</span></div>';
+
+    // Only shown when it is actually being charged, so the pay-at-pickup total
+    // never carries a line the guest has to work out they are not paying.
+    if (serviceFeeCents(sub) > 0) {
+      html +=
+        '<div><span>Service fee</span><span>' +
+        money(serviceFeeCents(sub)) +
+        '</span></div>';
+    }
+
+    html +=
       '<div class="apex-total"><span>Total</span><span>' +
       money(totalCents(sub)) +
       '</span></div>' +
-      '<p class="apex-note">Final total is confirmed by the kitchen when you place the order.</p>' +
+      '<p class="apex-note">' +
+      (payNow
+        ? 'You will be taken to a secure checkout to pay. Your food is made after payment.'
+        : 'Final total is confirmed by the kitchen when you place the order.') +
+      '</p>' +
       '</div>';
 
     html +=
@@ -488,7 +550,11 @@
       '<button type="submit" class="apex-primary" ' +
       (placing || isPaused() ? 'disabled' : '') +
       '>' +
-      (placing ? 'Placing…' : 'Place order · ' + money(totalCents(sub))) +
+      (placing
+        ? payNow
+          ? 'Taking you to checkout…'
+          : 'Placing…'
+        : (payNow ? 'Pay ' : 'Place order · ') + money(totalCents(sub))) +
       '</button>' +
       '<button type="button" class="apex-link" data-apex-view="menu">Keep browsing</button>' +
       '</form>';
@@ -500,18 +566,29 @@
     var total = (lastOrder && lastOrder.total_cents) || 0;
     var mins =
       (settings && settings.prep_minutes) || 30;
+    // Coming back from Stripe we know the order code but not the amount -- the
+    // browser never saw the confirmed total, and the webhook is what actually
+    // marks it paid. Say what is true rather than printing $0.00.
+    var fromCheckout = !!(lastOrder && lastOrder.paid_pending_confirmation);
+
     return (
       '<div class="apex-success">' +
-      '<p class="apex-kicker">Order placed</p>' +
+      '<p class="apex-kicker">' +
+      (fromCheckout ? 'Payment received' : 'Order placed') +
+      '</p>' +
       '<p class="apex-code">' +
       esc(code) +
       '</p>' +
       '<p>Show this code at pickup.</p>' +
-      '<p><strong>' +
-      money(total) +
-      '</strong> · ready in about ' +
-      mins +
-      ' minutes.</p>' +
+      (fromCheckout
+        ? '<p>Paid by card — nothing to pay when you collect. Ready in about ' +
+          mins +
+          ' minutes.</p>'
+        : '<p><strong>' +
+          money(total) +
+          '</strong> · ready in about ' +
+          mins +
+          ' minutes.</p>') +
       '<button type="button" class="apex-primary" data-apex-copy="' +
       esc(code) +
       '">Copy code</button>' +
@@ -675,6 +752,7 @@
         p_customer_phone: phone,
         p_notes: notes,
         p_pickup_minutes: settings.prep_minutes || 30,
+        p_payment_mode: payNow ? 'pay_now' : 'pay_at_pickup',
         p_items: cart.map(function (line) {
           return {
             menu_item_id: line.menu_item_id,
@@ -691,6 +769,26 @@
       if (Array.isArray(data)) data = data[0];
       if (!data || !data.public_token) throw new Error('place_order_empty');
 
+      if (payNow) {
+        // The order exists but is unpaid, and the kitchen does not see it until
+        // Stripe says otherwise. Keep the cart until the browser has actually
+        // left for checkout, so a failure here leaves the guest where they were
+        // rather than staring at an empty basket with nothing bought.
+        var pay = await client.functions.invoke('create-guest-payment', {
+          body: { order_id: data.id, public_token: data.public_token },
+        });
+        var url = pay && pay.data && pay.data.url;
+        if (pay && pay.error) throw pay.error;
+        if (!url) throw new Error('no_checkout_url');
+        try {
+          sessionStorage.setItem('apexPendingOrder', data.public_token);
+        } catch (ignored) {
+          // Private browsing. The return screen degrades, payment still works.
+        }
+        window.location.assign(url);
+        return;
+      }
+
       lastOrder = data;
       cart = [];
       view = 'success';
@@ -701,6 +799,15 @@
         alert('Ordering was just paused. Please call (717) 732-7708.');
       } else if (/too_many_open_orders/i.test(msg)) {
         alert('Kitchen is slammed — try again in a few minutes or call us.');
+      } else if (/stripe_not_connected/i.test(msg)) {
+        // The venue disconnected Stripe between page load and checkout.
+        payNow = false;
+        alert('Card payment is unavailable right now — you can still order and pay at pickup.');
+      } else if (/no_checkout_url|create-guest-payment|FunctionsError/i.test(msg)) {
+        alert(
+          'We could not open the card checkout. Nothing has been charged — ' +
+            'try again, or switch to Pay at pickup.'
+        );
       } else {
         alert('Could not place order. Check your connection and try again.');
       }
@@ -711,7 +818,13 @@
   }
 
   function onBodyClick(ev) {
-    var t = ev.target.closest('[data-add]');
+    var t = ev.target.closest('[data-paynow]');
+    if (t) {
+      payNow = t.getAttribute('data-paynow') === '1';
+      render(); // Totals move when this changes, so redraw rather than restyle.
+      return;
+    }
+    t = ev.target.closest('[data-add]');
     if (t) {
       onAdd(t.getAttribute('data-add'));
       return;
@@ -752,7 +865,62 @@
     }
   }
 
+  /// Stripe sends the guest back here with ?paid=1&code=XXXX (or paid=0 if they
+  /// backed out). Read it before anything else so someone returning from
+  /// checkout sees their order rather than the menu again, wondering whether
+  /// their card went through.
+  ///
+  /// Only ever a display decision. The order is marked paid by the Stripe
+  /// webhook, never by this parameter -- anyone can type `?paid=1`, and a page
+  /// that believed it would tell a guest their unpaid food was on its way.
+  function consumePaymentReturn() {
+    var params;
+    try {
+      params = new URLSearchParams(window.location.search);
+    } catch (ignored) {
+      return;
+    }
+    var paid = params.get('paid');
+    if (paid !== '1' && paid !== '0') return;
+
+    var code = (params.get('code') || '').trim();
+    if (!code) {
+      try {
+        code = sessionStorage.getItem('apexPendingOrder') || '';
+      } catch (ignored) {
+        code = '';
+      }
+    }
+    try {
+      sessionStorage.removeItem('apexPendingOrder');
+    } catch (ignored) {
+      // Nothing to clean up in private browsing.
+    }
+
+    if (paid === '1' && code) {
+      cart = [];
+      lastOrder = { public_token: code, paid_pending_confirmation: true };
+      view = 'success';
+    } else if (paid === '0') {
+      // Cancelled at Stripe. The order exists but is unpaid and the kitchen has
+      // not seen it, so send them back to the cart rather than pretending
+      // something happened.
+      payNow = true;
+      view = 'cart';
+    }
+
+    // Strip the parameters so a refresh, or a shared link, does not replay a
+    // payment screen for an order this browser may not own.
+    try {
+      var clean = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, '', clean);
+    } catch (ignored) {
+      // Old browser. The screen is still right; the URL is just untidy.
+    }
+  }
+
   async function boot() {
+    consumePaymentReturn();
     await loadCatalog();
     subscribeCatalogRealtime();
   }
