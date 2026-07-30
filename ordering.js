@@ -318,6 +318,47 @@
   }
 
   var CART_KEY = 'apexCart';
+  var GUEST_KEY = 'apexGuest';
+
+  /// Name, phone and notes typed at checkout. Kept for the same reason the cart
+  /// is: leaving for Stripe and coming back should not mean typing it all again,
+  /// and the point someone has already entered their details is an expensive
+  /// place to lose them.
+  ///
+  /// Session storage, so it belongs to this tab and this visit -- their own
+  /// details on their own device, gone when the tab closes. Nothing is sent
+  /// anywhere it would not already have gone with the order.
+  var guest = { name: '', phone: '', notes: '' };
+
+  function saveGuest(next) {
+    guest = {
+      name: (next && next.name) || '',
+      phone: (next && next.phone) || '',
+      notes: (next && next.notes) || '',
+    };
+    try {
+      sessionStorage.setItem(GUEST_KEY, JSON.stringify(guest));
+    } catch (ignored) {
+      // Private browsing. They will retype it, which is where we started.
+    }
+  }
+
+  function restoreGuest() {
+    try {
+      var raw = sessionStorage.getItem(GUEST_KEY);
+      if (!raw) return;
+      var saved = JSON.parse(raw);
+      if (saved && typeof saved === 'object') {
+        guest = {
+          name: String(saved.name || ''),
+          phone: String(saved.phone || ''),
+          notes: String(saved.notes || ''),
+        };
+      }
+    } catch (ignored) {
+      // Corrupt or unavailable; an empty form is a fine fallback.
+    }
+  }
 
   /// The cart lived only in memory, so paying navigated the browser to Stripe
   /// and anyone who backed out returned to an empty basket -- their order sat
@@ -610,9 +651,15 @@
 
     html +=
       '<form class="apex-form" id="apexCheckoutForm">' +
-      '<label>Name<input name="name" required autocomplete="name" /></label>' +
-      '<label>Phone<input name="phone" required autocomplete="tel" inputmode="tel" /></label>' +
-      '<label>Notes<textarea name="notes" rows="2" placeholder="Extra ranch, no onion…"></textarea></label>' +
+      '<label>Name<input name="name" required autocomplete="name" value="' +
+      esc(guest.name || '') +
+      '" /></label>' +
+      '<label>Phone<input name="phone" required autocomplete="tel" inputmode="tel" value="' +
+      esc(guest.phone || '') +
+      '" /></label>' +
+      '<label>Notes<textarea name="notes" rows="2" placeholder="Extra ranch, no onion…">' +
+      esc(guest.notes || '') +
+      '</textarea></label>' +
       '<button type="submit" class="apex-primary" ' +
       (placing || isPaused() ? 'disabled' : '') +
       '>' +
@@ -803,6 +850,7 @@
       alert('Name and phone are required.');
       return;
     }
+    saveGuest({ name: name, phone: phone, notes: notes });
 
     placing = true;
     render();
@@ -858,6 +906,7 @@
       lastOrder = data;
       cart = [];
       saveCart();
+      saveGuest(null);
       view = 'success';
       syncChrome();
     } catch (e) {
@@ -969,6 +1018,7 @@
     if (paid === '1' && code) {
       cart = [];
       saveCart();
+      saveGuest(null);
       lastOrder = { public_token: code, paid_pending_confirmation: true };
       view = 'success';
     } else if (paid === '0') {
@@ -994,7 +1044,10 @@
     await loadCatalog();
     // After the catalog, never before -- restoring re-reads prices from the
     // live menu rather than trusting what the browser stored.
-    if (!returnedFromCheckout) restoreCart();
+    if (!returnedFromCheckout) {
+      restoreCart();
+      restoreGuest();
+    }
     syncChrome();
     subscribeCatalogRealtime();
   }
