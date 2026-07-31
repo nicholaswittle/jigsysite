@@ -115,7 +115,7 @@
         .select(
           'id, public_token, status, submitted_at, accepted_at, completed_at, rejected_at, ' +
             'reject_reason, pickup_minutes, customer_json, notes, ' +
-            'subtotal_cents, fee_cents, tax_cents, total_cents, payment_status, payment_mode, ' +
+            'subtotal_cents, fee_cents, tax_cents, total_cents, tip_cents, square_payment_id, payment_status, payment_mode, ' +
             'order_items(id, name, price_cents, quantity, notes, ' +
             'order_item_modifiers(name, price_delta_cents))'
         )
@@ -166,12 +166,30 @@
       return o.status === 'rejected';
     }).length;
     var sales = done.reduce(function (n, o) {
-      return n + (o.total_cents || 0);
+      // Stripe total includes its pre-checkout tip; Square's stored order total
+      // does not. Either way, sales is food/tax/fees and never payroll tips.
+      return n + salesCents(o);
     }, 0);
+    var tips = today
+      .filter(function (o) { return o.payment_status === 'paid'; })
+      .reduce(function (n, o) { return n + tipCents(o); }, 0);
     $('statWait').textContent = String(waiting);
     $('statDone').textContent = String(done.length);
     $('statRejected').textContent = String(rejected);
     $('statSales').textContent = money(sales);
+    $('statTips').textContent = money(tips);
+  }
+
+  function tipCents(order) {
+    return Math.max(0, Number(order.tip_cents) || 0);
+  }
+
+  function chargedTotalCents(order) {
+    return (Number(order.total_cents) || 0) + (order.square_payment_id ? tipCents(order) : 0);
+  }
+
+  function salesCents(order) {
+    return (Number(order.total_cents) || 0) - (order.square_payment_id ? 0 : tipCents(order));
   }
 
   function customer(order) {
@@ -455,19 +473,24 @@
           money(order.fee_cents) +
           '</strong></div>'
         : '') +
+      (tipCents(order)
+        ? '<div class="ticket-total"><span>Tip</span><strong>' +
+          money(tipCents(order)) +
+          '</strong></div>'
+        : '') +
       // An online payment has already been taken. Printing "DUE AT PICKUP" and
       // "COLLECT AT COUNTER" on a paid order tells whoever works the counter to
       // charge the customer a second time -- on paper, with authority, after
       // the screen has been forgotten.
       (order.payment_status === 'refunded'
         ? '<div class="ticket-total ticket-due"><span>REFUNDED</span><strong>' +
-          money(order.total_cents) +
+          money(chargedTotalCents(order)) +
           '</strong></div>' +
           '<div class="ticket-rule"></div>' +
           '<div class="ticket-center">REFUNDED — DO NOT HAND OVER</div>'
         : order.payment_status === 'paid' || order.payment_mode === 'pay_now'
         ? '<div class="ticket-total ticket-due"><span>PAID ONLINE</span><strong>' +
-          money(order.total_cents) +
+          money(chargedTotalCents(order)) +
           '</strong></div>' +
           '<div class="ticket-rule"></div>' +
           '<div class="ticket-center">DO NOT COLLECT<br>ALREADY PAID ONLINE</div>'

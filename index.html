@@ -927,6 +927,12 @@
      to make someone guess which option is active. */
   .apex-paybtn.is-on::before { content: '✓ '; }
   .apex-paybtn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .apex-tip { border: 1px solid var(--line); border-radius: var(--radius); margin: 16px 0; padding: 10px; }
+  .apex-tip legend { font-family: var(--display); font-size: 0.82rem; font-weight: 700; }
+  .apex-tipbtn { margin: 3px; padding: 8px 10px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--ground); color: var(--ink); cursor: pointer; }
+  .apex-tipbtn.is-on { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+  .apex-tip-custom { display: block; margin-top: 8px; font-size: 0.8rem; }
+  .apex-tip-custom input { width: 90px; margin-left: 8px; padding: 7px; border: 1px solid var(--line-strong); border-radius: var(--radius); }
 
   .apex-totals { margin: 16px 0; font-family: var(--display); font-size: 0.9rem; }
   .apex-totals > div { display: flex; justify-content: space-between; margin-bottom: 6px; }

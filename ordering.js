@@ -21,6 +21,9 @@
   var cart = [];
   var view = 'menu'; // menu | cart | success
   var payNow = false;
+  // Stripe collects a tip in this cart. Square collects it natively after
+  // redirect, so this selection is deliberately never sent to Square.
+  var tipSelection = { kind: 'none', value: 0 };
   // Set when this page load is a return from the hosted payment page. The ordering UI is a modal
   // that starts hidden, so a guest coming back from checkout would otherwise
   // land on the ordinary homepage with no sign their card was charged.
@@ -74,8 +77,21 @@
     return Math.round((sub + taxCents(sub)) * 0.015);
   }
 
+  function paymentProvider() {
+    return settings && settings.payment_provider === 'square' ? 'square' : 'stripe';
+  }
+
+  function stripeTipCents(sub) {
+    if (!payNow || paymentProvider() !== 'stripe') return 0;
+    if (tipSelection.kind === 'percent') {
+      // Tip food plus tax, never the guest-paid service fee.
+      return Math.round((sub + taxCents(sub)) * tipSelection.value / 100);
+    }
+    return tipSelection.kind === 'custom' ? tipSelection.value : 0;
+  }
+
   function totalCents(sub) {
-    return sub + feeCents() + taxCents(sub) + serviceFeeCents(sub);
+    return sub + feeCents() + taxCents(sub) + serviceFeeCents(sub) + stripeTipCents(sub);
   }
 
   /// Whether this venue can take a card at all, on either rail.
@@ -329,13 +345,25 @@
   /// Session storage, so it belongs to this tab and this visit -- their own
   /// details on their own device, gone when the tab closes. Nothing is sent
   /// anywhere it would not already have gone with the order.
-  var guest = { name: '', phone: '', notes: '' };
+  var guest = { name: '', phone: '', notes: '', tip: { kind: 'none', value: 0 } };
+
+  function normalizeTip(value) {
+    if (!value || typeof value !== 'object') return { kind: 'none', value: 0 };
+    var kind = value.kind;
+    var amount = Math.max(0, Math.round(Number(value.value) || 0));
+    if (kind === 'percent' && [15, 18, 20].indexOf(amount) >= 0) {
+      return { kind: kind, value: amount };
+    }
+    if (kind === 'custom') return { kind: kind, value: amount };
+    return { kind: 'none', value: 0 };
+  }
 
   function saveGuest(next) {
     guest = {
       name: (next && next.name) || '',
       phone: (next && next.phone) || '',
       notes: (next && next.notes) || '',
+      tip: normalizeTip(next && next.tip),
     };
     try {
       sessionStorage.setItem(GUEST_KEY, JSON.stringify(guest));
@@ -354,7 +382,9 @@
           name: String(saved.name || ''),
           phone: String(saved.phone || ''),
           notes: String(saved.notes || ''),
+          tip: normalizeTip(saved.tip),
         };
+        tipSelection = guest.tip;
       }
     } catch (ignored) {
       // Corrupt or unavailable; an empty form is a fine fallback.
@@ -645,6 +675,28 @@
         '</div>';
     }
 
+    if (payNow && paymentProvider() === 'stripe') {
+      var tip = stripeTipCents(sub);
+      html +=
+        '<fieldset class="apex-tip" aria-label="Tip">' +
+        '<legend>Tip (optional)</legend>' +
+        [15, 18, 20].map(function (percent) {
+          var selected = tipSelection.kind === 'percent' && tipSelection.value === percent;
+          return '<button type="button" class="apex-tipbtn' + (selected ? ' is-on' : '') +
+            '" data-tip-percent="' + percent + '" aria-pressed="' + String(selected) + '">' +
+            percent + '%</button>';
+        }).join('') +
+        '<button type="button" class="apex-tipbtn' + (tipSelection.kind === 'custom' ? ' is-on' : '') +
+        '" data-tip-custom="1" aria-pressed="' + String(tipSelection.kind === 'custom') + '">Custom</button>' +
+        '<button type="button" class="apex-tipbtn' + (tipSelection.kind === 'none' ? ' is-on' : '') +
+        '" data-tip-none="1" aria-pressed="' + String(tipSelection.kind === 'none') + '">No tip</button>' +
+        (tipSelection.kind === 'custom'
+          ? '<label class="apex-tip-custom">Custom tip<input id="apexTipCustom" inputmode="decimal" value="' +
+            esc((tipSelection.value / 100).toFixed(2)) + '" /></label>'
+          : '') +
+        '<p class="apex-note">Tip: ' + money(tip) + '</p></fieldset>';
+    }
+
     html +=
       '<div class="apex-totals">' +
       '<div><span>Subtotal</span><span>' +
@@ -663,6 +715,13 @@
       html +=
         '<div><span>Service fee</span><span>' +
         money(serviceFeeCents(sub)) +
+        '</span></div>';
+    }
+
+    if (stripeTipCents(sub) > 0) {
+      html +=
+        '<div><span>Tip</span><span>' +
+        money(stripeTipCents(sub)) +
         '</span></div>';
     }
 
@@ -878,7 +937,7 @@
       alert('Name and phone are required.');
       return;
     }
-    saveGuest({ name: name, phone: phone, notes: notes });
+    saveGuest({ name: name, phone: phone, notes: notes, tip: tipSelection });
 
     placing = true;
     render();
@@ -895,6 +954,7 @@
         p_notes: notes,
         p_pickup_minutes: settings.prep_minutes || 30,
         p_payment_mode: payNow ? 'pay_now' : 'pay_at_pickup',
+        p_tip_cents: stripeTipCents(cartSubtotal()),
         p_items: cart.map(function (line) {
           return {
             menu_item_id: line.menu_item_id,
@@ -977,6 +1037,27 @@
       render(); // Totals move when this changes, so redraw rather than restyle.
       return;
     }
+    t = ev.target.closest('[data-tip-percent]');
+    if (t) {
+      tipSelection = { kind: 'percent', value: Number(t.getAttribute('data-tip-percent')) };
+      saveGuest({ name: guest.name, phone: guest.phone, notes: guest.notes, tip: tipSelection });
+      render();
+      return;
+    }
+    t = ev.target.closest('[data-tip-custom]');
+    if (t) {
+      tipSelection = { kind: 'custom', value: tipSelection.kind === 'custom' ? tipSelection.value : 0 };
+      saveGuest({ name: guest.name, phone: guest.phone, notes: guest.notes, tip: tipSelection });
+      render();
+      return;
+    }
+    t = ev.target.closest('[data-tip-none]');
+    if (t) {
+      tipSelection = { kind: 'none', value: 0 };
+      saveGuest({ name: guest.name, phone: guest.phone, notes: guest.notes, tip: tipSelection });
+      render();
+      return;
+    }
     t = ev.target.closest('[data-add]');
     if (t) {
       onAdd(t.getAttribute('data-add'));
@@ -1017,6 +1098,14 @@
       lastOrder = null;
     }
   }
+
+  document.addEventListener('change', function (ev) {
+    if (!ev.target || ev.target.id !== 'apexTipCustom') return;
+    var cents = Math.round(Number(ev.target.value) * 100);
+    tipSelection = cents > 0 ? { kind: 'custom', value: cents } : { kind: 'none', value: 0 };
+    saveGuest({ name: guest.name, phone: guest.phone, notes: guest.notes, tip: tipSelection });
+    render();
+  });
 
   /// The hosted payment page sends the guest back here with ?paid=1&code=XXXX (or paid=0 if they
   /// backed out). Read it before anything else so someone returning from
