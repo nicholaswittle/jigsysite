@@ -209,21 +209,18 @@
 
   async function loadCatalog() {
     var client = await ensureClient();
-    var restRes = await client
-      .from('restaurants')
-      .select('id, organization_id, name, public_token')
-      .eq('public_token', PUBLIC_TOKEN)
-      .maybeSingle();
-    if (restRes.error) throw restRes.error;
-    if (!restRes.data) throw new Error('restaurant_not_found');
-    restaurant = restRes.data;
+    // The token-scoped RPC is the only anonymous venue bootstrap path. Reading
+    // either table directly would require exposing Connect/payment metadata.
+    var venueRes = await client.rpc('apex_guest_venue', {
+      p_public_token: PUBLIC_TOKEN,
+    });
+    if (venueRes.error) throw venueRes.error;
+    var venue = venueRes.data || {};
+    if (!venue.restaurant) throw new Error('restaurant_not_found');
+    restaurant = venue.restaurant;
+    settings = venue.settings || {};
 
     var results = await Promise.all([
-      client
-        .from('restaurant_settings')
-        .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, payment_provider, stripe_charges_enabled, square_charges_enabled')
-        .eq('restaurant_id', restaurant.id)
-        .maybeSingle(),
       client
         .from('menu_categories')
         .select('id, name, sort_order')
@@ -249,19 +246,18 @@
     if (results[1].error) throw results[1].error;
     if (results[2].error) throw results[2].error;
     if (results[3].error) throw results[3].error;
-    if (results[4].error) throw results[4].error;
 
-    settings = results[0].data || {
+    settings = settings || {
       paused: false,
       fee_cents: 0,
       tax_rate: 0,
       prep_minutes: 30,
     };
-    categories = results[1].data || [];
-    items = results[2].data || [];
+    categories = results[0].data || [];
+    items = results[1].data || [];
 
-    var groupRows = results[3].data || [];
-    var optionRows = results[4].data || [];
+    var groupRows = results[2].data || [];
+    var optionRows = results[3].data || [];
     var optsByGroup = {};
     optionRows.forEach(function (o) {
       if (!optsByGroup[o.modifier_group_id]) optsByGroup[o.modifier_group_id] = [];
@@ -281,8 +277,8 @@
       });
     });
 
-    var capRaw = results[5].data;
-    if (!results[5].error && capRaw) {
+    var capRaw = results[4].data;
+    if (!results[4].error && capRaw) {
       capacity = typeof capRaw === 'object' ? capRaw : null;
     }
 
@@ -300,12 +296,12 @@
       });
       if (!res.error && res.data) capacity = res.data;
       if (restaurant) {
-        var s = await client
-          .from('restaurant_settings')
-          .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, payment_provider, stripe_charges_enabled, square_charges_enabled')
-          .eq('restaurant_id', restaurant.id)
-          .maybeSingle();
-        if (!s.error && s.data) settings = s.data;
+        var venueRes = await client.rpc('apex_guest_venue', {
+          p_public_token: PUBLIC_TOKEN,
+        });
+        if (!venueRes.error && venueRes.data && venueRes.data.settings) {
+          settings = venueRes.data.settings;
+        }
       }
       syncChrome();
       if (!$('apexOverlay').hidden) render();
