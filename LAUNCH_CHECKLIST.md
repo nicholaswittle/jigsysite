@@ -42,7 +42,26 @@ concept — not the official Jigsy's site…"*.
 guest uploads and the prices are unverified, that disclaimer is doing real work.
 It comes out last, not first.
 
-### 4. Point the site at their real domain
+### 4. Rotate the Supabase secret key
+
+The `sb_secret_…` key was pasted into a chat transcript on 2026-07-31 while
+debugging the `check-capacity` scheduler. It is the key the edge functions
+receive as `SUPABASE_SERVICE_ROLE_KEY`, and it bypasses every RLS policy in the
+project. Deferred deliberately at the time — rotating mid-debug adds a variable
+— but it must not survive to launch.
+
+Sequence, once things are stable:
+
+1. Settings → API Keys → revoke and reissue the secret key.
+2. Redeploy the edge functions so they pick up the new value (from PowerShell,
+   so Docker is on PATH).
+3. Re-run the self-verifying Vault block against the new digest — the one that
+   hashes the pasted key and refuses to store a mismatch.
+
+Also delete `apex_v2/supabase/service role key.txt`. Vault holds the real
+value now, and that file is a plaintext credential in a working tree.
+
+### 5. Point the site at their real domain
 
 `restaurant_settings.site_url` is still unset or pointing at a preview URL. It
 must be their real https domain before launch, because guest checkout return
