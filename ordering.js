@@ -74,7 +74,7 @@
   /// service fee rather than a surcharge.
   function serviceFeeCents(sub) {
     if (!payNow) return 0;
-    return Math.round((sub + taxCents(sub)) * 0.015);
+    return Math.round((sub + taxCents(sub)) * Number(settings && settings.service_fee_rate != null ? settings.service_fee_rate : 0));
   }
 
   function paymentProvider() {

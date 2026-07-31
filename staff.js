@@ -260,10 +260,11 @@
           })
           .join('');
         var paidOnline =
-          (o.payment_status === 'paid' || o.payment_mode === 'pay_now') &&
+          (o.payment_status === 'paid' || o.payment_status === 'partially_refunded' || o.payment_mode === 'pay_now') &&
           o.payment_status !== 'refunded';
         var refundButton = paidOnline
-          ? '<button type="button" class="danger" data-reject="' +
+          ? '<button type="button" class="action" data-refund="' + esc(o.id) + '">Refund...</button>' +
+            '<button type="button" class="danger" data-reject="' +
             esc(o.id) +
             '">Refund &amp; reject</button>'
           : '';
@@ -321,6 +322,8 @@
           '<div class="due">' +
           (o.payment_status === 'refunded'
             ? 'REFUNDED · ' + money(o.total_cents) + ' — do not hand over'
+            : o.payment_status === 'partially_refunded'
+            ? 'PARTIALLY REFUNDED · ' + money(o.refunded_cents || 0) + ' returned'
             : o.payment_status === 'paid' || o.payment_mode === 'pay_now'
             ? 'PAID ONLINE · ' + money(o.total_cents) + ' — do not collect'
             : money(o.total_cents) + ' due at pickup') +
@@ -414,6 +417,28 @@
       reject_reason: reason,
     });
     showToast(wasPaid ? 'Rejected and refunded.' : 'Rejected.');
+  }
+
+  async function refundOrder(id) {
+    var order = orders.find(function (o) { return o.id === id; });
+    if (!order) return;
+    var remaining = chargedTotalCents(order) - Math.max(0, Number(order.refunded_cents) || 0);
+    if (remaining <= 0) return;
+    var answer = window.prompt('Refund amount in dollars (blank = full remaining ' + money(remaining) + '):', '');
+    if (answer === null) return;
+    var amount = answer.trim() === '' ? remaining : Math.round(Number(answer) * 100);
+    if (!Number.isFinite(amount) || amount <= 0 || amount > remaining) {
+      showToast('Enter an amount from $0.01 to ' + money(remaining) + '.');
+      return;
+    }
+    var reason = window.prompt('Refund reason?', 'Customer request') || 'Customer request';
+    var res = await client().functions.invoke('refund-order', {
+      body: { organization_id: restaurant.organization_id, order_id: id, amount_cents: amount, reason: reason },
+    });
+    var data = res && res.data;
+    if (!data || data.error || data.refunded !== true) throw new Error('refund_failed');
+    showToast(data.remaining_cents ? 'Partial refund sent.' : 'Full refund sent.');
+    await refresh();
   }
 
   function ticketMarkup(order) {
@@ -977,12 +1002,16 @@
   $('orderList').addEventListener('click', function (ev) {
     var a = ev.target.closest('[data-accept]');
     var r = ev.target.closest('[data-reject]');
+    var f = ev.target.closest('[data-refund]');
     var p = ev.target.closest('[data-print]');
     if (a) acceptOrder(a.getAttribute('data-accept')).catch(function (e) {
       showToast((e && e.message) || 'Accept failed');
     });
     if (r) rejectOrder(r.getAttribute('data-reject')).catch(function (e) {
       showToast((e && e.message) || 'Reject failed');
+    });
+    if (f) refundOrder(f.getAttribute('data-refund')).catch(function (e) {
+      showToast((e && e.message) || 'Refund failed');
     });
     if (p) printOrder(p.getAttribute('data-print'));
   });
