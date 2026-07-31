@@ -241,15 +241,33 @@
             );
           })
           .join('');
+        var paidOnline =
+          (o.payment_status === 'paid' || o.payment_mode === 'pay_now') &&
+          o.payment_status !== 'refunded';
+        var refundButton = paidOnline
+          ? '<button type="button" class="danger" data-reject="' +
+            esc(o.id) +
+            '">Refund &amp; reject</button>'
+          : '';
         var actions = '';
         if (o.status === 'waiting') {
           actions =
             '<button type="button" class="ok" data-accept="' +
             esc(o.id) +
             '">Accept &amp; print</button>' +
-            '<button type="button" class="danger" data-reject="' +
+            (refundButton ||
+              '<button type="button" class="danger" data-reject="' +
             esc(o.id) +
-            '">Reject</button>';
+                '">Reject</button>');
+        } else if (
+          (o.status === 'accepted' || o.status === 'completed') &&
+          refundButton
+        ) {
+          actions =
+            '<button type="button" class="action" data-print="' +
+            esc(o.id) +
+            '">Re-print</button>' +
+            refundButton;
         } else if (o.status === 'accepted' || o.status === 'completed') {
           actions =
             '<button type="button" class="action" data-print="' +
