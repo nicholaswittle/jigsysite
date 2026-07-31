@@ -21,7 +21,7 @@
   var cart = [];
   var view = 'menu'; // menu | cart | success
   var payNow = false;
-  // Set when this page load is a return from Stripe. The ordering UI is a modal
+  // Set when this page load is a return from the hosted payment page. The ordering UI is a modal
   // that starts hidden, so a guest coming back from checkout would otherwise
   // land on the ordinary homepage with no sign their card was charged.
   var returnedFromCheckout = false;
@@ -221,7 +221,7 @@
     var results = await Promise.all([
       client
         .from('restaurant_settings')
-        .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled, square_charges_enabled')
+        .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, payment_provider, stripe_charges_enabled, square_charges_enabled')
         .eq('restaurant_id', restaurant.id)
         .maybeSingle(),
       client
@@ -302,7 +302,7 @@
       if (restaurant) {
         var s = await client
           .from('restaurant_settings')
-          .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled, square_charges_enabled')
+          .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, payment_provider, stripe_charges_enabled, square_charges_enabled')
           .eq('restaurant_id', restaurant.id)
           .maybeSingle();
         if (!s.error && s.data) settings = s.data;
@@ -917,7 +917,7 @@
 
       if (payNow) {
         // The order exists but is unpaid, and the kitchen does not see it until
-        // Stripe says otherwise. Keep the cart until the browser has actually
+        // The payment provider says otherwise. Keep the cart until the browser has actually
         // left for checkout, so a failure here leaves the guest where they were
         // rather than staring at an empty basket with nothing bought.
         var pay = await client.functions.invoke('create-guest-payment', {
@@ -947,8 +947,8 @@
         alert('Ordering was just paused. Please call (717) 732-7708.');
       } else if (/too_many_open_orders/i.test(msg)) {
         alert('Kitchen is slammed — try again in a few minutes or call us.');
-      } else if (/stripe_not_connected/i.test(msg)) {
-        // The venue disconnected Stripe between page load and checkout.
+      } else if (/stripe_not_connected|payment_provider_not_connected/i.test(msg)) {
+        // The venue disconnected its payment provider between page load and checkout.
         payNow = false;
         alert('Card payment is unavailable right now — you can still order and pay at pickup.');
       } else if (/no_checkout_url|create-guest-payment|FunctionsError/i.test(msg)) {
@@ -1022,12 +1022,12 @@
     }
   }
 
-  /// Stripe sends the guest back here with ?paid=1&code=XXXX (or paid=0 if they
+  /// The hosted payment page sends the guest back here with ?paid=1&code=XXXX (or paid=0 if they
   /// backed out). Read it before anything else so someone returning from
   /// checkout sees their order rather than the menu again, wondering whether
   /// their card went through.
   ///
-  /// Only ever a display decision. The order is marked paid by the Stripe
+  /// Only ever a display decision. The order is marked paid by the payment
   /// webhook, never by this parameter -- anyone can type `?paid=1`, and a page
   /// that believed it would tell a guest their unpaid food was on its way.
   function consumePaymentReturn() {

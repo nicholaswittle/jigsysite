@@ -106,7 +106,7 @@
       client()
         .from('restaurant_settings')
         .select(
-          'paused, prep_minutes, fee_cents, tax_rate, payment_mode, restaurant_id, organization_id'
+          'paused, prep_minutes, fee_cents, tax_rate, payment_mode, payment_provider, square_charges_enabled, restaurant_id, organization_id'
         )
         .eq('restaurant_id', restaurant.id)
         .maybeSingle(),
@@ -146,8 +146,8 @@
     pause.setAttribute('aria-checked', String(!!settings.paused));
     $('prepOut').textContent = (settings.prep_minutes || 30) + ' min';
     $('payMode').textContent =
-      settings.payment_mode === 'square'
-        ? 'Square mode'
+      settings.square_charges_enabled && settings.payment_provider === 'square'
+        ? 'Online card pay · Square'
         : 'Manual · pay at pickup (Square at counter)';
   }
 
@@ -381,11 +381,11 @@
         var data = res && res.data;
         var ok = data && (data.refunded === true || data.refunded === false);
         if (!ok || (data && data.error)) {
-          showToast('Could not refund — order left open. Refund in Stripe first.');
+          showToast('Could not refund — order left open. Refund in the payment provider first.');
           return;
         }
       } catch (e) {
-        showToast('Could not refund — order left open. Refund in Stripe first.');
+        showToast('Could not refund — order left open. Refund in the payment provider first.');
         return;
       }
     }
