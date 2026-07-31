@@ -702,12 +702,18 @@
       '<div><span>Subtotal</span><span>' +
       money(sub) +
       '</span></div>' +
-      '<div><span>Fee</span><span>' +
-      money(feeCents()) +
-      '</span></div>' +
       '<div><span>Tax</span><span>' +
       money(taxCents(sub)) +
       '</span></div>';
+
+    // The optional venue fee is normally zero. Do not show a meaningless
+    // $0.00 line beside the actual card service fee and optional tip.
+    if (feeCents() > 0) {
+      html +=
+        '<div><span>Fee</span><span>' +
+        money(feeCents()) +
+        '</span></div>';
+    }
 
     // Only shown when it is actually being charged, so the pay-at-pickup total
     // never carries a line the guest has to work out they are not paying.
