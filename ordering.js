@@ -78,14 +78,21 @@
     return sub + feeCents() + taxCents(sub) + serviceFeeCents(sub);
   }
 
-  /// Whether this venue can take a card at all. place_order refuses with
-  /// stripe_not_connected otherwise, so offering the choice would be offering a
-  /// dead end.
+  /// Whether this venue can take a card at all, on either rail.
+  ///
+  /// create-guest-payment refuses with payment_provider_not_connected
+  /// otherwise, so offering the choice would be offering a dead end.
   function canPayNow() {
-    // stripe_charges_enabled alone. The account id is not readable by guests
-    // and does not need to be -- a stranger deciding whether to show a Pay now
-    // button has no business knowing which Stripe account is behind it.
-    return !!(settings && settings.stripe_charges_enabled);
+    // Either rail will do. The guest does not care which processor is behind
+    // the button, and this page must not care either -- checking only Stripe
+    // meant a venue moved to Square silently lost card payments and every
+    // order quietly became pay-at-pickup.
+    //
+    // Booleans only. The account id, merchant id and OAuth token are not
+    // readable by guests and do not need to be: whoever takes the money is
+    // none of a stranger's business, and the token would be a serious leak.
+    if (!settings) return false;
+    return !!(settings.stripe_charges_enabled || settings.square_charges_enabled);
   }
 
   function isPaused() {
@@ -214,7 +221,7 @@
     var results = await Promise.all([
       client
         .from('restaurant_settings')
-        .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled')
+        .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled, square_charges_enabled')
         .eq('restaurant_id', restaurant.id)
         .maybeSingle(),
       client
@@ -295,7 +302,7 @@
       if (restaurant) {
         var s = await client
           .from('restaurant_settings')
-          .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled')
+          .select('paused, fee_cents, tax_rate, prep_minutes, payment_mode, stripe_charges_enabled, square_charges_enabled')
           .eq('restaurant_id', restaurant.id)
           .maybeSingle();
         if (!s.error && s.data) settings = s.data;
