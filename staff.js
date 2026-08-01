@@ -8,7 +8,7 @@
   var SUPABASE_URL = 'https://pqkremkwfkudrhtxasdj.supabase.co';
   var SUPABASE_ANON_KEY =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxa3JlbWt3Zmt1ZHJodHhhc2RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4OTU2MDUsImV4cCI6MjA5NzQ3MTYwNX0.zF-UpQs8seDPmZT182CRoMpk7ZATzQrfpKiBbLWkKhQ';
-  var PUBLIC_TOKEN = 'jigsys';
+  var PUBLIC_TOKEN = 'jigsys-enola-7c2a';
 
   var ALERT_REPEAT_MS = 30000;
   var ALERT_ESCALATE_MS = 120000;

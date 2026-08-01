@@ -9,7 +9,7 @@
   // Publishable anon key — same class as Flutter web dart-define (not a secret).
   var SUPABASE_ANON_KEY =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxa3JlbWt3Zmt1ZHJodHhhc2RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4OTU2MDUsImV4cCI6MjA5NzQ3MTYwNX0.zF-UpQs8seDPmZT182CRoMpk7ZATzQrfpKiBbLWkKhQ';
-  var PUBLIC_TOKEN = 'jigsys';
+  var PUBLIC_TOKEN = 'jigsys-enola-7c2a';
 
   var sb = null;
   var restaurant = null;
